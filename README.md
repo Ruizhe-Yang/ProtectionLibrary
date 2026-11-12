@@ -4,7 +4,11 @@
 
 **Reusable protection logic and physical measures for Modelica system experiments.**
 
-**English** · [简体中文](README_zh.md)
+**English** · [简体中文](docs/LearningGuide.html)
+
+<!-- learning-guide:start -->
+> **[Detailed bilingual learning and usage guide](docs/LearningGuide.html)** — Chinese and British English in one offline-readable HTML file, with a complete component reference and every example explained. Download the HTML and open it in a browser to use language switching and search.
+<!-- learning-guide:end -->
 
 [![Source version 0.3.0](https://img.shields.io/badge/source-v0.3.0-188261)](package.mo)
 [![Modelica Standard Library 4.0.0](https://img.shields.io/badge/MSL-4.0.0-536478)](package.mo)
