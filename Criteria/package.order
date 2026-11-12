@@ -1,0 +1,12 @@
+HighLimit
+LowLimit
+OperatingWindow
+OutsideBand
+Persistence
+RateOfChange
+SensorDisagreement
+SequenceGuard
+SequencePermissive
+SignalValidity
+Watchdog
+WindowEnergyTrip

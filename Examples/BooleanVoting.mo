@@ -1,0 +1,54 @@
+within ProtectionLibrary.Examples;
+model BooleanVoting "Exercise all fixed Boolean votes with two invalid-channel policies"
+  extends Modelica.Icons.Example;
+  ProtectionLibrary.Utilities.Internal.VotePattern pattern annotation(Placement(transformation(origin={-279,10},extent={{-22,-22},{22,22}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.OneOutOfTwo oneOutOfTwo(useValidInput=true) annotation(Placement(transformation(origin={-120,155},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput oneOutOfTwoRequest annotation(Placement(transformation(origin={-67,115},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.TwoOutOfTwo twoOutOfTwo(useValidInput=true) annotation(Placement(transformation(origin={35,155},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput twoOutOfTwoRequest annotation(Placement(transformation(origin={88,115},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.OneOutOfThree oneOutOfThree(useValidInput=true) annotation(Placement(transformation(origin={186,155},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput oneOutOfThreeRequest annotation(Placement(transformation(origin={239,115},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.TwoOutOfThree twoOutOfThree(useValidInput=true) annotation(Placement(transformation(origin={-120,15},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput twoOutOfThreeRequest annotation(Placement(transformation(origin={-67,-25},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.TwoOutOfFour twoOutOfFour(useValidInput=true) annotation(Placement(transformation(origin={35,15},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput twoOutOfFourRequest annotation(Placement(transformation(origin={88,-25},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.TwoOutOfFive twoOutOfFive(useValidInput=true) annotation(Placement(transformation(origin={186,15},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput twoOutOfFiveRequest annotation(Placement(transformation(origin={239,-25},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.ThreeOutOfFive threeOutOfFive(useValidInput=true) annotation(Placement(transformation(origin={-120,-125},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput threeOutOfFiveRequest annotation(Placement(transformation(origin={-67,-165},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.ThreeOutOfThree threeOutOfThree(useValidInput=true) annotation(Placement(transformation(origin={35,-125},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput threeOutOfThreeRequest annotation(Placement(transformation(origin={88,-165},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.MOutOfN mOutOfN(useValidInput=true,n=3,m=2,invalidVote=false) annotation(Placement(transformation(origin={186,-125},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput mOutOfNRequest annotation(Placement(transformation(origin={239,-165},extent={{-7,-7},{7,7}},rotation=0)));
+equation
+  connect(pattern.votes[1:2],oneOutOfTwo.u) annotation(Line(points={{-257,10},{-196,10},{-196,165.5},{-135,165.5}},color={255,0,255}));
+  connect(pattern.valid[1:2],oneOutOfTwo.valid) annotation(Line(points={{-279,32},{-279,175},{-120,175},{-120,170}},color={255,0,255}));
+  connect(oneOutOfTwo.y,oneOutOfTwoRequest) annotation(Line(points={{-105,165.5},{-67,165.5},{-67,115}},color={255,0,255}));
+  connect(pattern.votes[1:2],twoOutOfTwo.u) annotation(Line(points={{-257,10},{-251,10},{-251,87.75},{14,87.75},{14,165.5},{20,165.5}},color={255,0,255}));
+  connect(pattern.valid[1:2],twoOutOfTwo.valid) annotation(Line(points={{-279,32},{-279,175},{35,175},{35,170}},color={255,0,255}));
+  connect(twoOutOfTwo.y,twoOutOfTwoRequest) annotation(Line(points={{50,165.5},{88,165.5},{88,115}},color={255,0,255}));
+  connect(pattern.votes[1:3],oneOutOfThree.u) annotation(Line(points={{-257,10},{-251,10},{-251,87.75},{165,87.75},{165,165.5},{171,165.5}},color={255,0,255}));
+  connect(pattern.valid[1:3],oneOutOfThree.valid) annotation(Line(points={{-279,32},{-279,175},{186,175},{186,170}},color={255,0,255}));
+  connect(oneOutOfThree.y,oneOutOfThreeRequest) annotation(Line(points={{201,165.5},{239,165.5},{239,115}},color={255,0,255}));
+  connect(pattern.votes[1:3],twoOutOfThree.u) annotation(Line(points={{-257,10},{-196,10},{-196,25.5},{-135,25.5}},color={255,0,255}));
+  connect(pattern.valid[1:3],twoOutOfThree.valid) annotation(Line(points={{-279,32},{-279,37},{-120,37},{-120,30}},color={255,0,255}));
+  connect(twoOutOfThree.y,twoOutOfThreeRequest) annotation(Line(points={{-105,25.5},{-67,25.5},{-67,-25}},color={255,0,255}));
+  connect(pattern.votes[1:4],twoOutOfFour.u) annotation(Line(points={{-257,10},{-252,10},{-252,33},{15,33},{15,25.5},{20,25.5}},color={255,0,255}));
+  connect(pattern.valid[1:4],twoOutOfFour.valid) annotation(Line(points={{-279,32},{-279,37},{35,37},{35,30}},color={255,0,255}));
+  connect(twoOutOfFour.y,twoOutOfFourRequest) annotation(Line(points={{50,25.5},{88,25.5},{88,-25}},color={255,0,255}));
+  connect(pattern.votes[1:5],twoOutOfFive.u) annotation(Line(points={{-257,10},{-252,10},{-252,33},{166,33},{166,25.5},{171,25.5}},color={255,0,255}));
+  connect(pattern.valid[1:5],twoOutOfFive.valid) annotation(Line(points={{-279,32},{-279,37},{186,37},{186,30}},color={255,0,255}));
+  connect(twoOutOfFive.y,twoOutOfFiveRequest) annotation(Line(points={{201,25.5},{239,25.5},{239,-25}},color={255,0,255}));
+  connect(pattern.votes[1:5],threeOutOfFive.u) annotation(Line(points={{-257,10},{-196,10},{-196,-114.5},{-135,-114.5}},color={255,0,255}));
+  connect(pattern.valid[1:5],threeOutOfFive.valid) annotation(Line(points={{-279,32},{-279,37},{-279,-105},{-120,-105},{-120,-110}},color={255,0,255}));
+  connect(threeOutOfFive.y,threeOutOfFiveRequest) annotation(Line(points={{-105,-114.5},{-67,-114.5},{-67,-165}},color={255,0,255}));
+  connect(pattern.votes[1:3],threeOutOfThree.u) annotation(Line(points={{-257,10},{-251,10},{-251,-52.25},{14,-52.25},{14,-114.5},{20,-114.5}},color={255,0,255}));
+  connect(pattern.valid[1:3],threeOutOfThree.valid) annotation(Line(points={{-279,32},{-279,37},{-279,-105},{35,-105},{35,-110}},color={255,0,255}));
+  connect(threeOutOfThree.y,threeOutOfThreeRequest) annotation(Line(points={{50,-114.5},{88,-114.5},{88,-165}},color={255,0,255}));
+  connect(pattern.votes[1:3],mOutOfN.u) annotation(Line(points={{-257,10},{-251,10},{-251,-52.25},{165,-52.25},{165,-114.5},{171,-114.5}},color={255,0,255}));
+  connect(pattern.valid[1:3],mOutOfN.valid) annotation(Line(points={{-279,32},{-279,37},{-279,-105},{186,-105},{186,-110}},color={255,0,255}));
+  connect(mOutOfN.y,mOutOfNRequest) annotation(Line(points={{201,-114.5},{239,-114.5},{239,-165}},color={255,0,255}));
+  annotation(experiment(StartTime=0,StopTime=4,Interval=0.008,Tolerance=1e-6),
+    Diagram(coordinateSystem(extent={{-360,-240},{360,240}},preserveAspectRatio=true)),
+    Documentation(info="<html><p><b>Purpose</b> Exercise all fixed Boolean votes with two invalid-channel policies</p><p><b>Interfaces</b> Instances and connections are shown in the Diagram layer.</p><p><b>Parameters</b> Default values are shown in the component modifiers.</p><p><b>Behavior</b> The 2-of-3 vote is true for true, false, true and false for all false. Its default invalid vote differs from invalidVote=false when the first channel becomes unavailable.</p><p><b>Initialization</b> All initial conditions are explicit in the source and component modifiers.</p><p><b>Activation and recovery</b> The given time windows follow the simulation time axis.</p><p><b>Limitations</b> This demonstration uses the declared inputs, initial conditions and idealized components.</p><p><b>Observables</b> twoOutOfThreeRequest, mOutOfNRequest and each nValid, degraded and enoughValid.</p></html>"));
+end BooleanVoting;
