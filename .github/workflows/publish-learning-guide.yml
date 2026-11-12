@@ -16,7 +16,7 @@ jobs:
       - name: Generate the reviewed HTML and commit documentation only
         shell: bash
         env:
-          BUILDER: 91c1a95a51f89b54f30d1b0a14bef905ab70da93
+          BUILDER: 86e31b71c82eb25dac7ded13c4e63eee58f7c17c
           GUIDE_HASH: 45b2a3dd334a4f71c90b760de451931ab8bca1de200ab76681e354f05ea78519
         run: |
           set -euo pipefail
