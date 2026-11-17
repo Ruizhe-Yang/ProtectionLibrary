@@ -1,5 +1,5 @@
 within ProtectionLibrary;
-package Thermal "Thermal"
+package Thermal "Thermal criteria, command derating and heat-flow devices"
   extends Modelica.Icons.Package;
   annotation(Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
       graphics={
@@ -11,5 +11,6 @@ package Thermal "Thermal"
         Line(points={{1.8492,-15.41},{1.8492,15.41}}, color={191,0,0}, thickness=1.3, pattern=LinePattern.Solid),
         Line(points={{-25.8888,36.3676},{25.8888,36.3676}}, color={64,64,64}, thickness=0.7, pattern=LinePattern.Solid, arrow={Arrow.None,Arrow.Filled}),
         Text(extent={{-27.738,-28.9708},{27.738,-47.4628}}, textString="G+", textColor={191,0,0}, fontSize=0)
-      }));
+      }),
+    Documentation(info="<html><p>Temperature criteria, heat-command processing, switchable conductances and prescribed cooling. Select heat-port models for energy exchange and signal blocks for monitoring or command modification.</p></html>"));
 end Thermal;

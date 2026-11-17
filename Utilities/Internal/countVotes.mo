@@ -1,9 +1,9 @@
 within ProtectionLibrary.Utilities.Internal;
-function countVotes "在当前有效通道中分别计数"
-  input Boolean channel[:];
-  input Boolean valid[size(channel,1)];
-  output Integer available;
-  output Integer votes;
+function countVotes "Count qualified channels and their true requests"
+  input Boolean channel[:] "Boolean channel requests";
+  input Boolean valid[size(channel,1)] "Channel-qualification flags";
+  output Integer available "Number of qualified channels";
+  output Integer votes "Number of true requests among qualified channels";
 algorithm
   available := 0;
   votes := 0;
@@ -31,17 +31,5 @@ algorithm
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
     Diagram(coordinateSystem(extent={{-100,-100},{100,100}})),
-    Documentation(info="<html>
-<p>在当前有效通道中分别计数</p>
-<p><b>行为</b> 在当前有效通道中分别计数。</p>
-<p><b>最小用法</b> 由本库组件按源码中的参数和接口装配。</p>
-<p><b>适用边界</b> 实现细节随本库版本演进。</p>
-<p>接口及方向</p>
-<ul>
-<li><code>input Boolean channel[:]</code></li>
-<li><code>input Boolean valid[size(channel,1)]</code></li>
-<li><code>output Integer available</code></li>
-<li><code>output Integer votes</code></li>
-</ul>
-</html>"));
+    Documentation(info="<html><p>Return <code>available</code> as the number of true entries in <code>valid</code>, and <code>votes</code> as the number of qualified channels whose request is true. Unqualified channels contribute to neither count. Empty arrays return two zeros.</p><p>This stateless helper applies no threshold and no invalid-channel substitution.</p></html>"));
 end countVotes;

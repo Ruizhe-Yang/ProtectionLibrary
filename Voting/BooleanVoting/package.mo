@@ -1,5 +1,5 @@
 within ProtectionLibrary.Voting;
-package BooleanVoting "BooleanVoting"
+package BooleanVoting "Boolean thresholds with explicit invalid-channel votes"
   extends Modelica.Icons.Package;
   annotation(Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
       graphics={
@@ -12,5 +12,5 @@ package BooleanVoting "BooleanVoting"
         Line(points={{-52.44,-44.16},{-11.96,-44.16}}, color={128,128,128}, thickness=0.7, pattern=LinePattern.Solid),
         Line(points={{52.44,0},{69,0}}, color={64,64,64}, thickness=0.8, pattern=LinePattern.Solid, arrow={Arrow.None,Arrow.Filled}),
         Text(extent={{-6.44,23.92},{47.84,-7.36}}, textString=">= 2", textColor={64,64,64}, fontSize=0)
-      }));
+      }), Documentation(info="<html><p>Fixed voting patterns and a configurable m-out-of-n block. Each unqualified channel supplies the selected invalid vote; qualification diagnostics are separate from the vote result.</p></html>"));
 end BooleanVoting;

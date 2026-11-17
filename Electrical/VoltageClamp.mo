@@ -1,14 +1,14 @@
 within ProtectionLibrary.Electrical;
-model VoltageClamp "Dissipate bus energy above a symmetric voltage threshold"
-Modelica.Electrical.Analog.Interfaces.PositivePin p annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Electrical.Analog.Interfaces.NegativePin n annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-  parameter Boolean useHeatPort=false;
-  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatPort if useHeatPort annotation(Placement(transformation(origin={0,-100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,-100},extent={{-10,-10},{10,10}})));
-  Modelica.Units.SI.Voltage v;
-  Modelica.Units.SI.Current i;
-  Modelica.Units.SI.Power lossPower;
-  parameter Modelica.Units.SI.Voltage Vmax(min=0)=14;
-  parameter Modelica.Units.SI.Conductance G(min=0)=1;
+model VoltageClamp "Symmetric dissipative shunt above a voltage threshold"
+Modelica.Electrical.Analog.Interfaces.PositivePin p  "Pin at the positive voltage reference" annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Electrical.Analog.Interfaces.NegativePin n  "Pin at the negative voltage reference" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+  parameter Boolean useHeatPort=false "Expose a heat port for electrical dissipation";
+  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatPort if useHeatPort  "Heat port exporting the dissipated power" annotation(Placement(transformation(origin={0,-100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,-100},extent={{-10,-10},{10,10}})));
+  Modelica.Units.SI.Voltage v "Voltage from p to n";
+  Modelica.Units.SI.Current i "Current entering p";
+  Modelica.Units.SI.Power lossPower "Nonnegative electrical dissipation";
+  parameter Modelica.Units.SI.Voltage Vmax(min=0)=14 "Absolute voltage threshold for conduction";
+  parameter Modelica.Units.SI.Conductance G(min=0)=1 "Incremental conductance beyond either threshold";
 
 
 initial equation
@@ -30,5 +30,5 @@ equation
         Text(extent={{-49,-37},{49,-66}}, textString="Vlim", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Dissipate bus energy above a symmetric voltage threshold.</p><p><b>Interfaces</b> Modelica.Electrical.Analog.Interfaces.PositivePin p; Modelica.Electrical.Analog.Interfaces.NegativePin n; Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatPort if useHeatPort</p><p><b>Parameters</b> parameter Boolean useHeatPort=false; parameter Modelica.Units.SI.Voltage Vmax(min=0)=14; parameter Modelica.Units.SI.Conductance G(min=0)=1</p><p><b>Behavior</b> Dissipate bus energy above a symmetric voltage threshold</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Positive i enters p. Positive dissipation can be exported as heat. The off branch is defined by the declared finite conductance.</p><p><b>Observables</b> Public outputs and the stated input conditions.</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.ElectricalTripAndDump\">ProtectionLibrary.Examples.ElectricalTripAndDump</a></p></html>"));
+    Documentation(info="<html><p>Draw no current while <code>abs(v)&lt;=Vmax</code>. Outside that band, current rises linearly with the excess voltage with slope <code>G</code>, with the same polarity as v. Positive current enters p and <code>lossPower=v*i</code> is nonnegative.</p><p>Connect the shunt across the protected nodes and optionally export dissipation through heatPort. A finite G gives a soft clamp: Vmax is the conduction threshold, not an enforced voltage ceiling.</p></html>"));
 end VoltageClamp;

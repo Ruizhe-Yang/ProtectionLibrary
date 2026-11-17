@@ -1,5 +1,5 @@
 within ProtectionLibrary;
-package Criteria "Criteria"
+package Criteria "Signal, timing and sequence protection criteria"
   extends Modelica.Icons.Package;
   annotation(Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
       graphics={
@@ -10,5 +10,5 @@ package Criteria "Criteria"
         Line(points={{15.64,-6.44},{15.64,11.04}}, color={0,0,127}, thickness=0.7, pattern=LinePattern.Solid, arrow={Arrow.None,Arrow.Filled}),
         Line(points={{-17.48,-44.16},{-17.48,-35.88}}, color={128,128,128}, thickness=0.6, pattern=LinePattern.Solid),
         Line(points={{15.64,-44.16},{15.64,-35.88}}, color={128,128,128}, thickness=0.6, pattern=LinePattern.Solid)
-      }));
+      }), Documentation(info="<html><p>Criteria convert measured signals or declared conditions into protection requests. Select threshold, validity, timing, sequence or energy behaviour and inspect diagnostic outputs where provided.</p><p>Optional validity handling is local to each criterion. Distinguish its measured condition from its configured response to invalid data.</p></html>"));
 end Criteria;

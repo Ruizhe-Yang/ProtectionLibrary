@@ -1,14 +1,14 @@
 within ProtectionLibrary.Coordination;
-block LossOfLinkFallback "持续失联和持续恢复分别确认后的备用命令"
-  parameter Modelica.Units.SI.Time lossDwell(min=0) = 0.3 "Loss confirmation";
-  parameter Modelica.Units.SI.Time recoveryDwell(min=0) = 1 "Recovery confirmation";
-  parameter Real fallback = 0 "Fallback command, same units as u";
-  Modelica.Blocks.Interfaces.BooleanInput linkHealthy "Link health reported by the host" annotation(Placement(transformation(extent={{-106,18},{-94,30}}), iconTransformation(extent={{-106,18},{-94,30}})));
+block LossOfLinkFallback "Fallback selection with separate loss and recovery dwells"
+  parameter Modelica.Units.SI.Time lossDwell(min=0) = 0.3 "Continuous unhealthy-link interval required for fallback";
+  parameter Modelica.Units.SI.Time recoveryDwell(min=0) = 1 "Continuous healthy-link interval required for recovery";
+  parameter Real fallback = 0 "Fallback command in the same unit as u";
+  Modelica.Blocks.Interfaces.BooleanInput linkHealthy "Externally determined link-health state" annotation(Placement(transformation(extent={{-106,18},{-94,30}}), iconTransformation(extent={{-106,18},{-94,30}})));
   Modelica.Blocks.Interfaces.RealInput u "Nominal command" annotation(Placement(transformation(extent={{-106,-30},{-94,-18}}), iconTransformation(extent={{-106,-30},{-94,-18}})));
-  Modelica.Blocks.Interfaces.RealOutput y "Selected command" annotation(Placement(transformation(extent={{94,18},{106,30}}), iconTransformation(extent={{94,18},{106,30}})));
-  Modelica.Blocks.Interfaces.BooleanOutput usingFallback(start=false,fixed=true) "Fallback selected" annotation(Placement(transformation(extent={{94,-30},{106,-18}}), iconTransformation(extent={{94,-30},{106,-18}})));
+  Modelica.Blocks.Interfaces.RealOutput y "Selected nominal or fallback command" annotation(Placement(transformation(extent={{94,18},{106,30}}), iconTransformation(extent={{94,18},{106,30}})));
+  Modelica.Blocks.Interfaces.BooleanOutput usingFallback(start=false,fixed=true) "Fallback command is currently selected" annotation(Placement(transformation(extent={{94,-30},{106,-18}}), iconTransformation(extent={{94,-30},{106,-18}})));
 protected
-  discrete Modelica.Units.SI.Time lastChange(start=0,fixed=true);
+  discrete Modelica.Units.SI.Time lastChange(start=0,fixed=true) "Time of initialisation or the latest link-health change";
 initial equation
   assert(lossDwell >= 0 and recoveryDwell >= 0, "Dwell times must be nonnegative.");
 equation
@@ -35,24 +35,5 @@ equation
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
     Diagram(coordinateSystem(extent={{-100,-100},{100,100}})),
-    Documentation(info="<html><p><b>Purpose</b> 持续失联和持续恢复分别确认后的备用命令</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanInput linkHealthy \"Link health reported by the host\"; Modelica.Blocks.Interfaces.RealInput u \"Nominal command\"; Modelica.Blocks.Interfaces.RealOutput y \"Selected command\"; Modelica.Blocks.Interfaces.BooleanOutput usingFallback(start=false,fixed=true) \"Fallback selected\"</p><p><b>Parameters</b> parameter Modelica.Units.SI.Time lossDwell(min=0) = 0.3 \"Loss confirmation\"; parameter Modelica.Units.SI.Time recoveryDwell(min=0) = 1 \"Recovery confirmation\"; parameter Real fallback = 0 \"Fallback command, same units as u\"</p><p><b>Behavior</b> 持续失联和持续恢复分别确认后的备用命令</p><p><b>Initialization</b> Use the declared initial values and host state modifiers.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Use the declared parameter range. The catalog identifies simulation coverage.</p><p><b>Observables</b> Inspect the declared output variables.</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">ProtectionLibrary.Examples.CommandPriorityAndInterlock</a></p>
-<p>持续失联和持续恢复分别确认后的备用命令</p>
-<p><b>行为</b> 失联持续到门限才选择备用命令。连接恢复并持续到恢复门限后才回切。</p>
-<p><b>最小用法</b> linkHealthy 由外部通信或看门狗给出，y 接单一执行链。</p>
-<p><b>适用边界</b> 确认时段内沿用原选择。此块无法证明受控设备已进入安全状态。</p>
-<p>参数的类型、默认值和取值见下列声明。</p>
-<ul>
-<li><code>Modelica.Units.SI.Time lossDwell(min=0) = 0.3 \"Loss confirmation\"</code></li>
-<li><code>Modelica.Units.SI.Time recoveryDwell(min=0) = 1 \"Recovery confirmation\"</code></li>
-<li><code>Real fallback = 0 \"Fallback command, same units as u\"</code></li>
-</ul>
-<p>接口及方向</p>
-<ul>
-<li><code>Modelica.Blocks.Interfaces.BooleanInput linkHealthy \"Link health reported by the host\"</code></li>
-<li><code>Modelica.Blocks.Interfaces.RealInput u \"Nominal command\"</code></li>
-<li><code>Modelica.Blocks.Interfaces.RealOutput y \"Selected command\"</code></li>
-<li><code>Modelica.Blocks.Interfaces.BooleanOutput usingFallback(start=false,fixed=true) \"Fallback selected\"</code></li>
-</ul>
-<p><a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">MultiConditionInterlock</a> 提供同域宿主参考。</p>
-</html>"));
+    Documentation(info="<html><p>Select the fallback command after linkHealthy has remained false for lossDwell. Return to the nominal command only after it has remained true for recoveryDwell. Every change in link health starts a fresh confirmation interval.</p><p>Initialisation begins in nominal operation unless an initially unhealthy link qualifies immediately with zero loss dwell. During an unconfirmed loss the nominal command remains selected; during unconfirmed recovery the fallback remains selected.</p></html>"));
 end LossOfLinkFallback;

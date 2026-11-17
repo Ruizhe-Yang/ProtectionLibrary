@@ -1,5 +1,5 @@
 within ProtectionLibrary;
-package UsersGuide "UsersGuide"
+package UsersGuide "User's guide"
   extends Modelica.Icons.Package;
   annotation(Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
       graphics={
@@ -7,5 +7,5 @@ package UsersGuide "UsersGuide"
         Line(points={{0,23},{0,-39.56}}, color={75,138,73}, thickness=0.8, pattern=LinePattern.Solid),
         Line(points={{-41.4,17.48},{-13.8,12.88}}, color={128,128,128}, thickness=0.6, pattern=LinePattern.Solid),
         Line(points={{13.8,12.88},{41.4,17.48}}, color={128,128,128}, thickness=0.6, pattern=LinePattern.Solid)
-      }));
+      }), Documentation(info="<html><p>Read GettingStarted for a first simulation, Conventions for interface and decision rules, and Limitations for physical assumptions and known interface constraints.</p></html>"));
 end UsersGuide;

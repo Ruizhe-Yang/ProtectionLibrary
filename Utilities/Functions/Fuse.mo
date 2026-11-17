@@ -1,22 +1,22 @@
 within ProtectionLibrary.Utilities.Functions;
-function Fuse "Evaluate one finite analog fusion from qualified inputs"
+function Fuse "Fuse finite qualified measurements and report availability"
   extends Modelica.Icons.Function;
-input Real u[:];
-  input Boolean valid[size(u,1)];
-  input Real weights[size(u,1)];
-  input Integer minValid;
-  input Integer trimEachSide;
-  input ProtectionLibrary.Utilities.Types.AnalogMethod method;
-  output Real value;
-  output Integer nValid;
-  output Boolean available;
+input Real u[:] "Measurements expressed in a common unit";
+  input Boolean valid[size(u,1)] "Qualification flags corresponding to u";
+  input Real weights[size(u,1)] "Channel weights used by WeightedMean";
+  input Integer minValid "Minimum eligible count after any trimming";
+  input Integer trimEachSide "Number removed from each sorted end for TrimmedMean";
+  input ProtectionLibrary.Utilities.Types.AnalogMethod method "Fusion method";
+  output Real value "Fused value, or zero when unavailable";
+  output Integer nValid "Number of finite qualified measurements before trimming";
+  output Boolean available "True when the selected fusion requirements are met";
 protected
-  Real ordered[size(u,1)];
-  Real sumValue;
-  Real weightTotal;
-  Real weighted;
-  Real selected;
-  Integer k;
+  Real ordered[size(u,1)] "Eligible measurements, sorted when required";
+  Real sumValue "Sum of eligible measurements";
+  Real weightTotal "Sum of eligible weights";
+  Real weighted "Sum of weighted eligible measurements";
+  Real selected "Value being inserted into the sorted prefix";
+  Integer k "Insertion-sort position";
 algorithm
   nValid:=0; ordered:=fill(0,size(u,1));
   sumValue:=0; weightTotal:=0; weighted:=0;
@@ -71,5 +71,5 @@ algorithm
         Line(points={{29.97,-37.38},{34.188,-41.82},{42.402,-31.164}}, color={75,138,73}, thickness=1.5, pattern=LinePattern.Solid),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Evaluate one finite analog fusion from qualified inputs.</p><p><b>Interfaces</b> input Real u[:]; input Boolean valid[size(u,1)]; input Real weights[size(u,1)]; input Integer minValid; input Integer trimEachSide; input ProtectionLibrary.Utilities.Types.AnalogMethod method; output Real value; output Integer nValid; output Boolean available</p><p><b>Parameters</b> No tuning parameters; use the declared input contract.</p><p><b>Behavior</b> Evaluate one finite analog fusion from qualified inputs</p><p><b>Initialization</b> Evaluated from the current inputs and parameter bindings.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Outputs retain the units declared at the interface. Numerical values depend on the supplied input and parameter range.</p><p><b>Observables</b> value, nValid, available</p></html>"));
+    Documentation(info="<html><p>Collect entries whose validity flag is true and whose absolute value is below infinity. Return their count as <code>nValid</code>. Mean and median require at least <code>minValid</code> entries; an even median averages the middle pair. WeightedMean also requires a positive eligible weight sum, and TrimmedMean requires <code>minValid</code> entries after removing <code>trimEachSide</code> entries from each sorted end.</p><p>Return <code>value=0</code> when unavailable; no fallback state is stored. The caller must supply valid minimum-count, trimming and weight settings. The function does not validate configuration.</p></html>"));
 end Fuse;

@@ -1,12 +1,12 @@
 within ProtectionLibrary.Thermal;
-block TemperatureDerating "Derate by a linear factor between two absolute temperatures"
-parameter Modelica.Units.SI.Temperature Tstart=310;
-  parameter Modelica.Units.SI.Temperature Tstop=330;
-  parameter Real minFactor(min=0,max=1)=0.5;
-    Modelica.Blocks.Interfaces.RealInput T(unit="K") annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.RealInput u annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.RealOutput y annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.RealOutput factor annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
+block TemperatureDerating "Linear temperature-dependent command derating"
+parameter Modelica.Units.SI.Temperature Tstart=310 "Temperature at or below which the multiplier is one";
+  parameter Modelica.Units.SI.Temperature Tstop=330 "Temperature at or above which the multiplier is minFactor";
+  parameter Real minFactor(min=0,max=1)=0.5 "Minimum nonnegative command multiplier";
+    Modelica.Blocks.Interfaces.RealInput T(unit="K")  "Absolute temperature used for derating" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.RealInput u  "Command before derating" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.RealOutput y  "Command multiplied by the derating factor" annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.RealOutput factor  "Temperature-dependent command multiplier" annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
 initial equation
   assert(Tstart<Tstop and minFactor>=0 and minFactor<=1,"Invalid thermal derating thresholds.");
 equation
@@ -22,5 +22,5 @@ equation
         Line(points={{27,-39},{27,48}}, color={128,128,128}, thickness=0.5, pattern=LinePattern.Dash),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Derate by a linear factor between two absolute temperatures.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.RealInput T(unit=\"K\"); Modelica.Blocks.Interfaces.RealInput u; Modelica.Blocks.Interfaces.RealOutput y; Modelica.Blocks.Interfaces.RealOutput factor</p><p><b>Parameters</b> parameter Modelica.Units.SI.Temperature Tstart=310; parameter Modelica.Units.SI.Temperature Tstop=330; parameter Real minFactor(min=0,max=1)=0.5</p><p><b>Behavior</b> Derate by a linear factor between two absolute temperatures</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Outputs retain the units declared at the interface. Numerical values depend on the supplied input and parameter range.</p><p><b>Observables</b> y, factor</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.ThermalCooling\">ProtectionLibrary.Examples.ThermalCooling</a></p></html>"));
+    Documentation(info="<html><p>Reduce factor linearly from one at <code>Tstart</code> to <code>minFactor</code> at <code>Tstop</code>, holding those factors outside the interval. Apply <code>y=factor*u</code> to the supplied command.</p><p>Use absolute temperature in kelvin. The command signal is untyped and retains its application-defined meaning. The block neither limits the input magnitude nor includes hysteresis, a thermal state or physical heat transfer.</p></html>"));
 end TemperatureDerating;

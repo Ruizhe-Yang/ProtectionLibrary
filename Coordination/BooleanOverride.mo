@@ -1,9 +1,9 @@
 within ProtectionLibrary.Coordination;
-block BooleanOverride "Override a Boolean command while protection is requested"
-parameter Boolean safeValue=false;
-    Modelica.Blocks.Interfaces.BooleanInput u annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput protect annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput y annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+block BooleanOverride "Boolean command override during protection"
+parameter Boolean safeValue=false "Boolean command selected while protection is requested";
+    Modelica.Blocks.Interfaces.BooleanInput u  "Nominal Boolean command" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput protect  "Select the protective command" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput y  "Selected Boolean command" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
 equation
   y=if protect then safeValue else u;
   annotation(Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
@@ -21,5 +21,5 @@ equation
         Text(extent={{-65,-50},{65,-75}}, textString="0 / 1", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Override a Boolean command while protection is requested.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanInput u; Modelica.Blocks.Interfaces.BooleanInput protect; Modelica.Blocks.Interfaces.BooleanOutput y</p><p><b>Parameters</b> parameter Boolean safeValue=false</p><p><b>Behavior</b> Override a Boolean command while protection is requested</p><p><b>Initialization</b> Evaluated from the current inputs and parameter bindings.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Outputs retain the units declared at the interface. Numerical values depend on the supplied input and parameter range.</p><p><b>Observables</b> y</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">ProtectionLibrary.Examples.CommandPriorityAndInterlock</a></p></html>"));
+    Documentation(info="<html><p>Output <code>safeValue</code> while protect is true and otherwise pass the nominal command unchanged. Protection and recovery are immediate; no latch or delay is included.</p></html>"));
 end BooleanOverride;

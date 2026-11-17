@@ -1,9 +1,9 @@
 within ProtectionLibrary.Coordination;
-block ModeFallback "对名义任务模式实施有优先级的降级或停车请求"
-  input ProtectionLibrary.Utilities.Types.OperatingMode normalMode "名义请求模式";
-  Modelica.Blocks.Interfaces.BooleanInput degrade "请求降级" annotation(Placement(transformation(extent={{-106,18},{-94,30}}), iconTransformation(extent={{-106,18},{-94,30}})));
-  Modelica.Blocks.Interfaces.BooleanInput stop "请求进入安全模式" annotation(Placement(transformation(extent={{-106,-30},{-94,-18}}), iconTransformation(extent={{-106,-30},{-94,-18}})));
-  output ProtectionLibrary.Utilities.Types.OperatingMode mode "仲裁后的模式";
+block ModeFallback "Operating-mode override with safe-state priority"
+  input ProtectionLibrary.Utilities.Types.OperatingMode normalMode "Nominal requested operating mode";
+  Modelica.Blocks.Interfaces.BooleanInput degrade "Select Reduced mode unless Safe has priority" annotation(Placement(transformation(extent={{-106,18},{-94,30}}), iconTransformation(extent={{-106,18},{-94,30}})));
+  Modelica.Blocks.Interfaces.BooleanInput stop "Select Safe mode" annotation(Placement(transformation(extent={{-106,-30},{-94,-18}}), iconTransformation(extent={{-106,-30},{-94,-18}})));
+  output ProtectionLibrary.Utilities.Types.OperatingMode mode "Selected operating-mode command";
 equation
   mode = if stop or normalMode == ProtectionLibrary.Utilities.Types.OperatingMode.Safe then
     ProtectionLibrary.Utilities.Types.OperatingMode.Safe
@@ -23,18 +23,5 @@ equation
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
     Diagram(coordinateSystem(extent={{-100,-100},{100,100}}, preserveAspectRatio=true), graphics={Text(extent={{-96,99},{96,88}}, textColor={25,90,132}, textString="ModeFallback")}),
-    Documentation(info="<html><p><b>Purpose</b> 对名义任务模式实施有优先级的降级或停车请求</p><p><b>Interfaces</b> input ProtectionLibrary.Utilities.Types.OperatingMode normalMode \"名义请求模式\"; Modelica.Blocks.Interfaces.BooleanInput degrade \"请求降级\"; Modelica.Blocks.Interfaces.BooleanInput stop \"请求进入安全模式\"; output ProtectionLibrary.Utilities.Types.OperatingMode mode \"仲裁后的模式\"</p><p><b>Parameters</b> The declaration has no standalone tuning parameters.</p><p><b>Behavior</b> 对名义任务模式实施有优先级的降级或停车请求</p><p><b>Initialization</b> Use the declared initial values and host state modifiers.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Use the declared parameter range. The catalog identifies simulation coverage.</p><p><b>Observables</b> Inspect the declared output variables.</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">ProtectionLibrary.Examples.CommandPriorityAndInterlock</a></p>
-<p>对名义任务模式实施有优先级的降级或停车请求</p>
-<p>专业分类为 SystemProtection.SafeState。</p>
-<p>接口与方向</p>
-<ul>
-<li><code>input ProtectionLibrary.Utilities.Types.OperatingMode normalMode \"名义请求模式\"</code></li>
-<li><code>Modelica.Blocks.Interfaces.BooleanInput degrade \"请求降级\"</code></li>
-<li><code>Modelica.Blocks.Interfaces.BooleanInput stop \"请求进入安全模式\"</code></li>
-<li><code>output ProtectionLibrary.Utilities.Types.OperatingMode mode \"仲裁后的模式\"</code></li>
-</ul>
-<p><b>时序与基准行为</b> 停止或已有 Safe 优先，降级不能将 Safe 提升至 Reduced。释放请求后跟随名义模式。</p>
-<p><b>最小用法</b> 在宿主状态机之前绑定 mode，单独测量实际进入状态。 <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">MultiConditionInterlock</a> 展示同域接线。</p>
-<p><b>适用边界</b> 需要手动恢复时将 stop 由锁存器驱动。</p>
-</html>"));
+    Documentation(info="<html><p>Select Safe when stop is true or normalMode is already Safe. Otherwise select Reduced while degrade is true, and pass normalMode when neither override applies.</p><p>Selection is immediate and has no latch, delay or capability assessment.</p></html>"));
 end ModeFallback;

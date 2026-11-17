@@ -1,11 +1,11 @@
 within ProtectionLibrary.Electrical;
-block PowerDerating "Scale a power demand during derating and enforce the rated bound"
-parameter Modelica.Units.SI.Power ratedPower(min=0)=100;
-  parameter Real factor(min=0,max=1)=0.6;
-    Modelica.Blocks.Interfaces.RealInput u(unit="W") annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput derate annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.RealOutput y(unit="W") annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput limited annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
+block PowerDerating "Power-command scaling with symmetric rated limits"
+parameter Modelica.Units.SI.Power ratedPower(min=0)=100 "Maximum absolute power command";
+  parameter Real factor(min=0,max=1)=0.6 "Command multiplier during derating";
+    Modelica.Blocks.Interfaces.RealInput u(unit="W")  "Requested signed power" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput derate  "Apply the derating multiplier" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.RealOutput y(unit="W")  "Scaled and limited power command" annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput limited  "True when scaling or saturation changes the request" annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
 initial equation
   assert(ratedPower>=0 and factor>=0 and factor<=1,"Invalid power derating.");
 equation
@@ -21,5 +21,5 @@ equation
         Text(extent={{26,69},{65,43}}, textString="P", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Scale a power demand during derating and enforce the rated bound.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.RealInput u(unit=\"W\"); Modelica.Blocks.Interfaces.BooleanInput derate; Modelica.Blocks.Interfaces.RealOutput y(unit=\"W\"); Modelica.Blocks.Interfaces.BooleanOutput limited</p><p><b>Parameters</b> parameter Modelica.Units.SI.Power ratedPower(min=0)=100; parameter Real factor(min=0,max=1)=0.6</p><p><b>Behavior</b> Scale a power demand during derating and enforce the rated bound</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> The output is a request in watts. The power delivered by the host is a separate measurement.</p><p><b>Observables</b> y, limited</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.ElectricalTripAndDump\">ProtectionLibrary.Examples.ElectricalTripAndDump</a></p></html>"));
+    Documentation(info="<html><p>Multiply the signed power request by <code>factor</code> while <code>derate=true</code>, then limit the result to [-ratedPower,ratedPower]. Otherwise the unscaled request is limited to the same interval.</p><p><code>limited</code> reports any difference between the final output and the original request, including a change caused only by derating. The block supplies a command in watts; delivered electrical power is determined by the receiving model.</p></html>"));
 end PowerDerating;

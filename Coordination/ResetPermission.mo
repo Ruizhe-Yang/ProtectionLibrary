@@ -1,12 +1,12 @@
 within ProtectionLibrary.Coordination;
-block ResetPermission "Permit reset only after continuous safe dwell"
-parameter Modelica.Units.SI.Time clearTime(min=0)=0.2;
-    Modelica.Blocks.Interfaces.BooleanInput danger annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput permissives annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput resetAllowed annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+block ResetPermission "Reset permission after a continuous clear interval"
+parameter Modelica.Units.SI.Time clearTime(min=0)=0.2 "Required continuous danger-free and permitted interval";
+    Modelica.Blocks.Interfaces.BooleanInput danger  "Condition that immediately prevents reset" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput permissives  "Combined external reset permissives" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput resetAllowed  "Continuous clear interval has been satisfied" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
 protected
-  Boolean clear;
-  discrete Modelica.Units.SI.Time clearSince(start=0,fixed=true);
+  Boolean clear "Danger is absent and reset permissives are satisfied";
+  discrete Modelica.Units.SI.Time clearSince(start=0,fixed=true) "Start time of the current clear interval";
 initial equation
   assert(clearTime>=0,"Negative clear time.");
 equation
@@ -24,5 +24,5 @@ equation
         Text(extent={{-61,-53},{54,-78}}, textString="safe t", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Permit reset only after continuous safe dwell.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanInput danger; Modelica.Blocks.Interfaces.BooleanInput permissives; Modelica.Blocks.Interfaces.BooleanOutput resetAllowed</p><p><b>Parameters</b> parameter Modelica.Units.SI.Time clearTime(min=0)=0.2</p><p><b>Behavior</b> Permit reset only after continuous safe dwell</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Outputs retain the units declared at the interface. Numerical values depend on the supplied input and parameter range.</p><p><b>Observables</b> resetAllowed</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">ProtectionLibrary.Examples.CommandPriorityAndInterlock</a></p></html>"));
+    Documentation(info="<html><p>Require danger false and permissives true continuously for clearTime. Timing begins at initialisation or when that combined condition becomes true. Any loss of the condition clears resetAllowed immediately; a later clear interval starts again.</p><p>The output is a permission level, not a reset event. A receiving latch can still require a separate reset edge.</p></html>"));
 end ResetPermission;

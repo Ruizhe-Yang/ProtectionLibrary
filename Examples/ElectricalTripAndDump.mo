@@ -1,17 +1,17 @@
 within ProtectionLibrary.Examples;
-model ElectricalTripAndDump "Open a resistive circuit and dissipate inductive energy in a separate circuit"
+model ElectricalTripAndDump "Open supply paths and provide an inductive discharge branch"
   extends Modelica.Icons.Example;
-  Modelica.Blocks.Sources.BooleanExpression trip(y=time>=1) annotation(Placement(transformation(origin={-263,190},extent={{-13,-13},{13,13}},rotation=0)));
-  Modelica.Electrical.Analog.Sources.ConstantVoltage resistiveSupply(V=12) annotation(Placement(transformation(origin={-259,103},extent={{-14,-14},{14,14}},rotation=270)));
-  Modelica.Electrical.Analog.Basic.Ground resistiveGround annotation(Placement(transformation(origin={-259,46},extent={{-10,-10},{10,10}},rotation=0)));
-  ProtectionLibrary.Electrical.Disconnect resistiveSwitch(Ron=0.001,Goff=1e-6) annotation(Placement(transformation(origin={-106,121},extent={{-15,-15},{15,15}},rotation=0)));
-  Modelica.Electrical.Analog.Basic.Resistor resistiveLoad(R=10) annotation(Placement(transformation(origin={55,121},extent={{-13,-13},{13,13}},rotation=0)));
-  Modelica.Electrical.Analog.Sources.ConstantVoltage inductiveSupply(V=12) annotation(Placement(transformation(origin={-259,-84},extent={{-14,-14},{14,14}},rotation=270)));
-  Modelica.Electrical.Analog.Basic.Ground inductiveGround annotation(Placement(transformation(origin={-259,-141},extent={{-10,-10},{10,10}},rotation=0)));
-  ProtectionLibrary.Electrical.Disconnect inductiveSwitch(Ron=0.001,Goff=1e-6) annotation(Placement(transformation(origin={-106,-66},extent={{-15,-15},{15,15}},rotation=0)));
-  Modelica.Electrical.Analog.Basic.Resistor inductiveLoad(R=10) annotation(Placement(transformation(origin={55,-66},extent={{-13,-13},{13,13}},rotation=0)));
-  Modelica.Electrical.Analog.Basic.Inductor coil(L=0.1,i(start=0,fixed=true)) annotation(Placement(transformation(origin={205,-66},extent={{-14,-14},{14,14}},rotation=0)));
-  ProtectionLibrary.Electrical.DumpLoad dump(R=10) annotation(Placement(transformation(origin={203,-162},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Sources.BooleanExpression trip(y=time>=1)  "Common opening and dump command" annotation(Placement(transformation(origin={-263,190},extent={{-13,-13},{13,13}},rotation=0)));
+  Modelica.Electrical.Analog.Sources.ConstantVoltage resistiveSupply(V=12)  "Voltage source for the resistive circuit" annotation(Placement(transformation(origin={-259,103},extent={{-14,-14},{14,14}},rotation=270)));
+  Modelica.Electrical.Analog.Basic.Ground resistiveGround  "Potential reference for the resistive circuit" annotation(Placement(transformation(origin={-259,46},extent={{-10,-10},{10,10}},rotation=0)));
+  ProtectionLibrary.Electrical.Disconnect resistiveSwitch(Ron=0.001,Goff=1e-6)  "Supply disconnect for the resistive circuit" annotation(Placement(transformation(origin={-106,121},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Electrical.Analog.Basic.Resistor resistiveLoad(R=10)  "Resistive electrical load" annotation(Placement(transformation(origin={55,121},extent={{-13,-13},{13,13}},rotation=0)));
+  Modelica.Electrical.Analog.Sources.ConstantVoltage inductiveSupply(V=12)  "Voltage source for the inductive circuit" annotation(Placement(transformation(origin={-259,-84},extent={{-14,-14},{14,14}},rotation=270)));
+  Modelica.Electrical.Analog.Basic.Ground inductiveGround  "Potential reference for the inductive circuit" annotation(Placement(transformation(origin={-259,-141},extent={{-10,-10},{10,10}},rotation=0)));
+  ProtectionLibrary.Electrical.Disconnect inductiveSwitch(Ron=0.001,Goff=1e-6)  "Supply disconnect for the inductive circuit" annotation(Placement(transformation(origin={-106,-66},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Electrical.Analog.Basic.Resistor inductiveLoad(R=10)  "Series resistance in the inductive circuit" annotation(Placement(transformation(origin={55,-66},extent={{-13,-13},{13,13}},rotation=0)));
+  Modelica.Electrical.Analog.Basic.Inductor coil(L=0.1,i(start=0,fixed=true))  "Inductor with a fixed zero initial current" annotation(Placement(transformation(origin={205,-66},extent={{-14,-14},{14,14}},rotation=0)));
+  ProtectionLibrary.Electrical.DumpLoad dump(R=10)  "Switchable discharge path across the inductor" annotation(Placement(transformation(origin={203,-162},extent={{-15,-15},{15,15}},rotation=0)));
 equation
   connect(resistiveSupply.n,resistiveGround.p) annotation(Line(points={{-259,89},{-259,56}},color={0,0,255}));
   connect(resistiveSupply.p,resistiveSwitch.p) annotation(Line(points={{-259,117},{-259,122},{-259,121},{-121,121}},color={0,0,255}));
@@ -29,5 +29,5 @@ equation
   connect(trip.y,dump.command) annotation(Line(points={{-248.7,190},{-19.85,190},{-19.85,-141},{203,-141},{203,-147}},color={255,0,255}));
   annotation(experiment(StartTime=0,StopTime=5,Interval=0.01,Tolerance=1e-6),
     Diagram(coordinateSystem(extent={{-360,-240},{360,240}},preserveAspectRatio=true)),
-    Documentation(info="<html><p><b>Purpose</b> Open a resistive circuit and dissipate inductive energy in a separate circuit</p><p><b>Interfaces</b> Instances and connections are shown in the Diagram layer.</p><p><b>Parameters</b> Default values are shown in the component modifiers.</p><p><b>Behavior</b> The resistive circuit has 1.19988 A before opening and below 50 microampere after opening. The coil retains a dissipative discharge route.</p><p><b>Initialization</b> All initial conditions are explicit in the source and component modifiers.</p><p><b>Activation and recovery</b> The given time windows follow the simulation time axis.</p><p><b>Limitations</b> This demonstration uses the declared inputs, initial conditions and idealized components.</p><p><b>Observables</b> resistiveLoad.i, inductiveSwitch.isOpen, coil.i and dump.lossPower.</p></html>"));
+    Documentation(info="<html><p>Use a trip command at 1 s in two independent 12 V circuits. The first supplies a resistor through a disconnect. The second supplies a resistor and inductor, with a separately connected dump resistor across the inductor.</p><p>The command opens both supply paths and enables the dump branch. Inspect the switch currents and voltage drops, <code>coil.i</code> and <code>dump.lossPower</code>. The disconnects retain their finite off-state conductance; the dump branch provides a discharge path rather than resetting the inductor state.</p></html>"));
 end ElectricalTripAndDump;

@@ -1,12 +1,12 @@
 within ProtectionLibrary.Thermal;
-model ThermalIsolation "Reduce a heat transfer path to a declared residual conductance"
-parameter Modelica.Units.SI.ThermalConductance Gnominal(min=0)=10;
-  parameter Modelica.Units.SI.ThermalConductance GResidual(min=0)=0.1;
-  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a port_a annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_b port_b annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-    Modelica.Blocks.Interfaces.BooleanInput command annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
-  Modelica.Units.SI.ThermalConductance conductance;
-  Modelica.Units.SI.HeatFlowRate heatFlow;
+model ThermalIsolation "Commanded reduction to a residual thermal conductance"
+parameter Modelica.Units.SI.ThermalConductance Gnominal(min=0)=10 "Thermal conductance without an isolation command";
+  parameter Modelica.Units.SI.ThermalConductance GResidual(min=0)=0.1 "Residual thermal conductance during isolation";
+  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a port_a  "First thermal connection" annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_b port_b  "Second thermal connection" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+    Modelica.Blocks.Interfaces.BooleanInput command  "Select the residual conductance" annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
+  Modelica.Units.SI.ThermalConductance conductance "Thermal conductance selected by the command";
+  Modelica.Units.SI.HeatFlowRate heatFlow "Heat flow from port_a to port_b";
 initial equation
   assert(GResidual>=0 and Gnominal>=GResidual,"Invalid thermal conductance ordering.");
 equation
@@ -26,5 +26,5 @@ equation
         Text(extent={{-45,-47},{45,-77}}, textString="G-", textColor={191,0,0}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Reduce a heat transfer path to a declared residual conductance.</p><p><b>Interfaces</b> Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a port_a; Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_b port_b; Modelica.Blocks.Interfaces.BooleanInput command</p><p><b>Parameters</b> parameter Modelica.Units.SI.ThermalConductance Gnominal(min=0)=10; parameter Modelica.Units.SI.ThermalConductance GResidual(min=0)=0.1</p><p><b>Behavior</b> Reduce a heat transfer path to a declared residual conductance</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Connect both heat ports to explicit thermal nodes. The device transports heat and stores no energy.</p><p><b>Observables</b> Public outputs and the stated input conditions.</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.ThermalCooling\">ProtectionLibrary.Examples.ThermalCooling</a></p></html>"));
+    Documentation(info="<html><p>Select <code>GResidual</code> while command=true and <code>Gnominal</code> otherwise. The conductance must be nonnegative and the residual value no greater than the nominal value. Heat flow from port_a to port_b follows their temperature difference.</p><p>Connect both ports to explicit thermal nodes. Switching is immediate and the element stores no energy. A positive residual conductance retains heat transfer during isolation.</p></html>"));
 end ThermalIsolation;

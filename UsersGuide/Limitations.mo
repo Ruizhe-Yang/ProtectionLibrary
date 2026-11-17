@@ -1,5 +1,5 @@
 within ProtectionLibrary.UsersGuide;
-class Limitations "Use only within the component assumptions and the documented evidence coverage."
+class Limitations "Component assumptions and known interface limitations"
   extends Modelica.Icons.Information;
-  annotation(Documentation(info="<html><p>Use only within the component assumptions and the documented evidence coverage.</p></html>"));
+  annotation(Documentation(info="<html><p>Protection requests and commanded states do not establish that a physical action occurred. Use independent response signals for ActionMonitor and interpret its first-action and timeout semantics. Preserve discharge and heat-transfer paths required by the physical model.</p><p>Device models use simplified constitutive relations. Finite conductance, viscous braking, filtered opening and signal saturation have different effects; select parameters consistently with the connected system.</p><p>In the current OverspeedGuard wrapper, the speed comparison is assigned to persistence.condition, which is a computed output, while persistence.u is left unbound. Review that interface before using the wrapper. A speed comparison connected to Criteria.Persistence.u provides the explicit criterion chain described in the manual.</p></html>"));
 end Limitations;

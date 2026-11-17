@@ -1,23 +1,23 @@
 within ProtectionLibrary.Criteria;
-block Watchdog "Watch for a genuinely new count or heartbeat edge"
-parameter Boolean useValidInput=false;
-  parameter Boolean failSafe=true;
-  Modelica.Blocks.Interfaces.BooleanInput valid if useValidInput annotation(Placement(transformation(origin={70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={70,100},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput inputValid annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput condition annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput request annotation(Placement(transformation(origin={-70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={-70,100},extent={{-10,-10},{10,10}})));
+block Watchdog "Timeout since a count increase or heartbeat edge"
+parameter Boolean useValidInput=false "Enable the external validity input";
+  parameter Boolean failSafe=true "Request value used when input validity is false";
+  Modelica.Blocks.Interfaces.BooleanInput valid if useValidInput  "External qualification of the supplied signal" annotation(Placement(transformation(origin={70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={70,100},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput inputValid  "True when the criterion has accepted its required inputs" annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput condition  "Evaluated cause before the invalid-input policy" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput request  "Protection request after the invalid-input policy" annotation(Placement(transformation(origin={-70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={-70,100},extent={{-10,-10},{10,10}})));
 
-  parameter Boolean useCount=true;
-  parameter Modelica.Units.SI.Time timeout(min=0)=0.5;
-  parameter Modelica.Units.SI.Time graceTime(min=0)=1;
-    Modelica.Blocks.Interfaces.IntegerInput count if useCount annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput heartbeat if not useCount annotation(Placement(transformation(origin={-100,35},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,35},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.RealOutput lastSeen(unit="s",start=0,fixed=true) annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
+  parameter Boolean useCount=true "Select a count input instead of a Boolean heartbeat";
+  parameter Modelica.Units.SI.Time timeout(min=0)=0.5 "Allowed time since initialisation or the latest activity";
+  parameter Modelica.Units.SI.Time graceTime(min=0)=1 "Initial interval before timeout qualification is allowed";
+    Modelica.Blocks.Interfaces.IntegerInput count if useCount  "Count whose strict increases indicate new activity" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput heartbeat if not useCount  "Heartbeat whose rising edges indicate new activity" annotation(Placement(transformation(origin={-100,35},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,35},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.RealOutput lastSeen(unit="s",start=0,fixed=true)  "Time of initialisation or the latest accepted activity" annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
 protected
-  Modelica.Blocks.Interfaces.BooleanInput trusted annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.IntegerInput updates annotation(Placement(transformation(origin={-100,-35},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-35},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput pulse annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  discrete Modelica.Units.SI.Time began(start=0,fixed=true);
+  Modelica.Blocks.Interfaces.BooleanInput trusted  "Bound external validity, or true when the input is disabled" annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.IntegerInput updates  "Bound activity count" annotation(Placement(transformation(origin={-100,-35},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-35},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput pulse  "Bound Boolean heartbeat" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  discrete Modelica.Units.SI.Time began(start=0,fixed=true) "Simulation initialisation time";
 initial equation
   assert(timeout>=0 and graceTime>=0,"Invalid watchdog timing.");
 equation
@@ -41,5 +41,5 @@ equation
         Text(extent={{-2,-28},{61,-52}}, textString="t >", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Watch for a genuinely new count or heartbeat edge.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanInput valid if useValidInput; Modelica.Blocks.Interfaces.BooleanOutput inputValid; Modelica.Blocks.Interfaces.BooleanOutput condition; Modelica.Blocks.Interfaces.BooleanOutput request; Modelica.Blocks.Interfaces.IntegerInput count if useCount; Modelica.Blocks.Interfaces.BooleanInput heartbeat if not useCount; Modelica.Blocks.Interfaces.RealOutput lastSeen(unit=\"s\",start=0,fixed=true)</p><p><b>Parameters</b> parameter Boolean useValidInput=false; parameter Boolean failSafe=true; parameter Boolean useCount=true; parameter Modelica.Units.SI.Time timeout(min=0)=0.5; parameter Modelica.Units.SI.Time graceTime(min=0)=1</p><p><b>Behavior</b> Watch for a genuinely new count or heartbeat edge</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> The protection request may be a fail-safe response to invalid data. inputValid and condition expose that distinction.</p><p><b>Observables</b> inputValid, condition, request, lastSeen</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.ThresholdLatchReset\">ProtectionLibrary.Examples.ThresholdLatchReset</a></p></html>"));
+    Documentation(info="<html><p>Select either an integer count or a Boolean heartbeat. Refresh <code>lastSeen</code> on a strict count increase or a heartbeat rising edge. Initialisation sets the initial reference time; a held heartbeat or a decreasing count does not refresh it.</p><p>Condition becomes true once both the initial <code>graceTime</code> and the timeout since the latest refresh have elapsed. The optional validity flag selects the request policy but does not gate refresh events. A later refresh clears the timeout condition until its next deadline.</p></html>"));
 end Watchdog;

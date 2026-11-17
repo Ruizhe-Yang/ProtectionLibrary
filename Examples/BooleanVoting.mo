@@ -1,25 +1,25 @@
 within ProtectionLibrary.Examples;
-model BooleanVoting "Exercise all fixed Boolean votes with two invalid-channel policies"
+model BooleanVoting "Compare fixed Boolean votes and invalid-channel policies"
   extends Modelica.Icons.Example;
-  ProtectionLibrary.Utilities.Internal.VotePattern pattern annotation(Placement(transformation(origin={-279,10},extent={{-22,-22},{22,22}},rotation=0)));
-  ProtectionLibrary.Voting.BooleanVoting.OneOutOfTwo oneOutOfTwo(useValidInput=true) annotation(Placement(transformation(origin={-120,155},extent={{-15,-15},{15,15}},rotation=0)));
-  Modelica.Blocks.Interfaces.BooleanOutput oneOutOfTwoRequest annotation(Placement(transformation(origin={-67,115},extent={{-7,-7},{7,7}},rotation=0)));
-  ProtectionLibrary.Voting.BooleanVoting.TwoOutOfTwo twoOutOfTwo(useValidInput=true) annotation(Placement(transformation(origin={35,155},extent={{-15,-15},{15,15}},rotation=0)));
-  Modelica.Blocks.Interfaces.BooleanOutput twoOutOfTwoRequest annotation(Placement(transformation(origin={88,115},extent={{-7,-7},{7,7}},rotation=0)));
-  ProtectionLibrary.Voting.BooleanVoting.OneOutOfThree oneOutOfThree(useValidInput=true) annotation(Placement(transformation(origin={186,155},extent={{-15,-15},{15,15}},rotation=0)));
-  Modelica.Blocks.Interfaces.BooleanOutput oneOutOfThreeRequest annotation(Placement(transformation(origin={239,115},extent={{-7,-7},{7,7}},rotation=0)));
-  ProtectionLibrary.Voting.BooleanVoting.TwoOutOfThree twoOutOfThree(useValidInput=true) annotation(Placement(transformation(origin={-120,15},extent={{-15,-15},{15,15}},rotation=0)));
-  Modelica.Blocks.Interfaces.BooleanOutput twoOutOfThreeRequest annotation(Placement(transformation(origin={-67,-25},extent={{-7,-7},{7,7}},rotation=0)));
-  ProtectionLibrary.Voting.BooleanVoting.TwoOutOfFour twoOutOfFour(useValidInput=true) annotation(Placement(transformation(origin={35,15},extent={{-15,-15},{15,15}},rotation=0)));
-  Modelica.Blocks.Interfaces.BooleanOutput twoOutOfFourRequest annotation(Placement(transformation(origin={88,-25},extent={{-7,-7},{7,7}},rotation=0)));
-  ProtectionLibrary.Voting.BooleanVoting.TwoOutOfFive twoOutOfFive(useValidInput=true) annotation(Placement(transformation(origin={186,15},extent={{-15,-15},{15,15}},rotation=0)));
-  Modelica.Blocks.Interfaces.BooleanOutput twoOutOfFiveRequest annotation(Placement(transformation(origin={239,-25},extent={{-7,-7},{7,7}},rotation=0)));
-  ProtectionLibrary.Voting.BooleanVoting.ThreeOutOfFive threeOutOfFive(useValidInput=true) annotation(Placement(transformation(origin={-120,-125},extent={{-15,-15},{15,15}},rotation=0)));
-  Modelica.Blocks.Interfaces.BooleanOutput threeOutOfFiveRequest annotation(Placement(transformation(origin={-67,-165},extent={{-7,-7},{7,7}},rotation=0)));
-  ProtectionLibrary.Voting.BooleanVoting.ThreeOutOfThree threeOutOfThree(useValidInput=true) annotation(Placement(transformation(origin={35,-125},extent={{-15,-15},{15,15}},rotation=0)));
-  Modelica.Blocks.Interfaces.BooleanOutput threeOutOfThreeRequest annotation(Placement(transformation(origin={88,-165},extent={{-7,-7},{7,7}},rotation=0)));
-  ProtectionLibrary.Voting.BooleanVoting.MOutOfN mOutOfN(useValidInput=true,n=3,m=2,invalidVote=false) annotation(Placement(transformation(origin={186,-125},extent={{-15,-15},{15,15}},rotation=0)));
-  Modelica.Blocks.Interfaces.BooleanOutput mOutOfNRequest annotation(Placement(transformation(origin={239,-165},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Utilities.Internal.VotePattern pattern  "Common Boolean votes and validity pattern" annotation(Placement(transformation(origin={-279,10},extent={{-22,-22},{22,22}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.OneOutOfTwo oneOutOfTwo(useValidInput=true)  "One-out-of-two vote" annotation(Placement(transformation(origin={-120,155},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput oneOutOfTwoRequest  "Protection request from the oneOutOfTwo voter" annotation(Placement(transformation(origin={-67,115},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.TwoOutOfTwo twoOutOfTwo(useValidInput=true)  "Two-out-of-two vote" annotation(Placement(transformation(origin={35,155},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput twoOutOfTwoRequest  "Protection request from the twoOutOfTwo voter" annotation(Placement(transformation(origin={88,115},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.OneOutOfThree oneOutOfThree(useValidInput=true)  "One-out-of-three vote" annotation(Placement(transformation(origin={186,155},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput oneOutOfThreeRequest  "Protection request from the oneOutOfThree voter" annotation(Placement(transformation(origin={239,115},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.TwoOutOfThree twoOutOfThree(useValidInput=true)  "Two-out-of-three vote" annotation(Placement(transformation(origin={-120,15},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput twoOutOfThreeRequest  "Protection request from the twoOutOfThree voter" annotation(Placement(transformation(origin={-67,-25},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.TwoOutOfFour twoOutOfFour(useValidInput=true)  "Two-out-of-four vote" annotation(Placement(transformation(origin={35,15},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput twoOutOfFourRequest  "Protection request from the twoOutOfFour voter" annotation(Placement(transformation(origin={88,-25},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.TwoOutOfFive twoOutOfFive(useValidInput=true)  "Two-out-of-five vote" annotation(Placement(transformation(origin={186,15},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput twoOutOfFiveRequest  "Protection request from the twoOutOfFive voter" annotation(Placement(transformation(origin={239,-25},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.ThreeOutOfFive threeOutOfFive(useValidInput=true)  "Three-out-of-five vote" annotation(Placement(transformation(origin={-120,-125},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput threeOutOfFiveRequest  "Protection request from the threeOutOfFive voter" annotation(Placement(transformation(origin={-67,-165},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.ThreeOutOfThree threeOutOfThree(useValidInput=true)  "Three-out-of-three vote" annotation(Placement(transformation(origin={35,-125},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput threeOutOfThreeRequest  "Protection request from the threeOutOfThree voter" annotation(Placement(transformation(origin={88,-165},extent={{-7,-7},{7,7}},rotation=0)));
+  ProtectionLibrary.Voting.BooleanVoting.MOutOfN mOutOfN(useValidInput=true,n=3,m=2,invalidVote=false)  "Configurable two-out-of-three vote with false invalid votes" annotation(Placement(transformation(origin={186,-125},extent={{-15,-15},{15,15}},rotation=0)));
+  Modelica.Blocks.Interfaces.BooleanOutput mOutOfNRequest  "Protection request from the mOutOfN voter" annotation(Placement(transformation(origin={239,-165},extent={{-7,-7},{7,7}},rotation=0)));
 equation
   connect(pattern.votes[1:2],oneOutOfTwo.u) annotation(Line(points={{-257,10},{-196,10},{-196,165.5},{-135,165.5}},color={255,0,255}));
   connect(pattern.valid[1:2],oneOutOfTwo.valid) annotation(Line(points={{-279,32},{-279,175},{-120,175},{-120,170}},color={255,0,255}));
@@ -50,5 +50,5 @@ equation
   connect(mOutOfN.y,mOutOfNRequest) annotation(Line(points={{201,-114.5},{239,-114.5},{239,-165}},color={255,0,255}));
   annotation(experiment(StartTime=0,StopTime=4,Interval=0.008,Tolerance=1e-6),
     Diagram(coordinateSystem(extent={{-360,-240},{360,240}},preserveAspectRatio=true)),
-    Documentation(info="<html><p><b>Purpose</b> Exercise all fixed Boolean votes with two invalid-channel policies</p><p><b>Interfaces</b> Instances and connections are shown in the Diagram layer.</p><p><b>Parameters</b> Default values are shown in the component modifiers.</p><p><b>Behavior</b> The 2-of-3 vote is true for true, false, true and false for all false. Its default invalid vote differs from invalidVote=false when the first channel becomes unavailable.</p><p><b>Initialization</b> All initial conditions are explicit in the source and component modifiers.</p><p><b>Activation and recovery</b> The given time windows follow the simulation time axis.</p><p><b>Limitations</b> This demonstration uses the declared inputs, initial conditions and idealized components.</p><p><b>Observables</b> twoOutOfThreeRequest, mOutOfNRequest and each nValid, degraded and enoughValid.</p></html>"));
+    Documentation(info="<html><p>Drive the eight fixed voting structures and one configurable two-out-of-three voter from a shared pattern. Each voter receives the appropriate leading channels and their validity flags.</p><p>The fixed voters retain <code>invalidVote=true</code>; the configurable voter uses <code>invalidVote=false</code>. Compare the two two-out-of-three outputs when a channel becomes invalid. Inspect <code>nValid</code> and <code>enoughValid</code> separately: insufficient validity does not suppress the Boolean vote.</p></html>"));
 end BooleanVoting;

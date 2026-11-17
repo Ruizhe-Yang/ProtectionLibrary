@@ -1,5 +1,5 @@
 within ProtectionLibrary;
-package Electrical "Electrical"
+package Electrical "Electrical criteria, commands and dissipative devices"
   extends Modelica.Icons.Package;
   annotation(Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
       graphics={
@@ -9,5 +9,6 @@ package Electrical "Electrical"
         Ellipse(extent={{19.32,-2.576},{24.472,2.576}}, lineColor={64,64,64}, fillColor={64,64,64}, fillPattern=FillPattern.Solid, pattern=LinePattern.Solid, lineThickness=0.5),
         Line(points={{-21.896,0},{15.456,21.896}}, color={64,64,64}, thickness=1.2, pattern=LinePattern.Solid),
         Line(points={{-8.372,36.708},{-8.372,23.828}}, color={128,128,128}, thickness=0.6, pattern=LinePattern.Solid, arrow={Arrow.None,Arrow.Filled})
-      }));
+      }),
+    Documentation(info="<html><p>Voltage criteria, current and power commands, electrical contacts and dissipative shunts. Select signal blocks for command processing and pin-based models for physical circuit connections.</p></html>"));
 end Electrical;

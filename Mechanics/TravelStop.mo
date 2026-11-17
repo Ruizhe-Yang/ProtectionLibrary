@@ -1,20 +1,20 @@
 within ProtectionLibrary.Mechanics;
-model TravelStop "Limit relative travel through finite compressive contact"
-parameter Modelica.Units.SI.Length lower=-0.1;
-  parameter Modelica.Units.SI.Length upper=0.1;
-  parameter Boolean twoSided=true;
-  parameter Real k(unit="N/m",min=0)=1000;
-  parameter Real d(unit="N.s/m",min=0)=5;
-  parameter Modelica.Units.SI.Length blend(min=0)=0.001;
-  Modelica.Mechanics.Translational.Interfaces.Flange_a flange_a annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Mechanics.Translational.Interfaces.Flange_b flange_b annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Units.SI.Length position;
-  Modelica.Units.SI.Velocity speed;
-  Modelica.Units.SI.Force contactForce;
-  Modelica.Units.SI.Power lossPower;
+model TravelStop "Compliant travel stops with compression-only damping"
+parameter Modelica.Units.SI.Length lower=-0.1 "Relative position of the optional lower stop";
+  parameter Modelica.Units.SI.Length upper=0.1 "Relative position of the upper stop";
+  parameter Boolean twoSided=true "Enable the lower stop as well as the upper stop";
+  parameter Real k(unit="N/m",min=0)=1000 "Nonnegative contact stiffness";
+  parameter Real d(unit="N.s/m",min=0)=5 "Nonnegative damping coefficient during increasing penetration";
+  parameter Modelica.Units.SI.Length blend(min=0)=0.001 "Positive penetration scale for damping activation";
+  Modelica.Mechanics.Translational.Interfaces.Flange_a flange_a  "First translational connection" annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Mechanics.Translational.Interfaces.Flange_b flange_b  "Second translational connection" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Units.SI.Length position "Position of flange_b relative to flange_a";
+  Modelica.Units.SI.Velocity speed "Rate of change of relative position";
+  Modelica.Units.SI.Force contactForce "Signed contact force entering flange_b";
+  Modelica.Units.SI.Power lossPower "Nonnegative damping dissipation";
 protected
-  Modelica.Units.SI.Length over;
-  Modelica.Units.SI.Length under;
+  Modelica.Units.SI.Length over "Penetration beyond the upper stop";
+  Modelica.Units.SI.Length under "Penetration beyond the enabled lower stop";
 initial equation
   assert(lower<upper and k>=0 and d>=0 and blend>0,"Invalid travel stop geometry.");
 equation
@@ -39,5 +39,5 @@ equation
         Line(points={{-27,53},{27,53}}, color={128,128,128}, thickness=0.6, pattern=LinePattern.Solid, arrow={Arrow.Filled,Arrow.Filled}),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Limit relative travel through finite compressive contact.</p><p><b>Interfaces</b> Modelica.Mechanics.Translational.Interfaces.Flange_a flange_a; Modelica.Mechanics.Translational.Interfaces.Flange_b flange_b</p><p><b>Parameters</b> parameter Modelica.Units.SI.Length lower=-0.1; parameter Modelica.Units.SI.Length upper=0.1; parameter Boolean twoSided=true; parameter Real k(unit=\"N/m\",min=0)=1000; parameter Real d(unit=\"N.s/m\",min=0)=5; parameter Modelica.Units.SI.Length blend(min=0)=0.001</p><p><b>Behavior</b> Limit relative travel through finite compressive contact</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Contact resists compression outside the travel range. The force law is a finite compliance, not an ideal position constraint.</p><p><b>Observables</b> Public outputs and the stated input conditions.</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.MechanicalBraking\">ProtectionLibrary.Examples.MechanicalBraking</a></p></html>"));
+    Documentation(info="<html><p>Use <code>position=flange_b.s-flange_a.s</code> as relative travel. Above upper, a finite spring resists further separation; below lower, a second stop acts when twoSided=true. With twoSided=false, only the upper stop is present.</p><p>Damping acts only while penetration increases, with a smooth penetration multiplier set by <code>blend</code>. <code>contactForce</code> is the force entering flange_b; lossPower reports damping dissipation. Finite stiffness permits penetration and stores elastic energy, so this is not an ideal position constraint.</p></html>"));
 end TravelStop;

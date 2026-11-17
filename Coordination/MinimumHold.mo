@@ -1,14 +1,14 @@
 within ProtectionLibrary.Coordination;
-block MinimumHold "Keep the commanded state for its minimum dwell and admit emergency action immediately"
-parameter Modelica.Units.SI.Time minOnTime(min=0)=0.2;
-  parameter Modelica.Units.SI.Time minOffTime(min=0)=0.2;
-    Modelica.Blocks.Interfaces.BooleanInput u annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput emergency annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput y(start=false,fixed=true) annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+block MinimumHold "Minimum on and off dwell with immediate emergency enable"
+parameter Modelica.Units.SI.Time minOnTime(min=0)=0.2 "Minimum on duration after an output transition";
+  parameter Modelica.Units.SI.Time minOffTime(min=0)=0.2 "Minimum off duration before a normal turn-on";
+    Modelica.Blocks.Interfaces.BooleanInput u  "Requested Boolean state" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput emergency  "Force the output true immediately" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput y(start=false,fixed=true)  "Boolean command after dwell qualification" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
 protected
-  discrete Modelica.Units.SI.Time since(start=0,fixed=true);
-  Boolean canTurnOn;
-  Boolean canTurnOff;
+  discrete Modelica.Units.SI.Time since(start=0,fixed=true) "Time of the latest output transition";
+  Boolean canTurnOn "Normal turn-on request has satisfied the off dwell";
+  Boolean canTurnOff "Turn-off request has satisfied the on dwell";
 initial equation
   assert(minOnTime>=0 and minOffTime>=0,"Negative hold time.");
 equation
@@ -27,5 +27,5 @@ equation
         Text(extent={{-39,78},{24,58}}, textString="min", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Keep the commanded state for its minimum dwell and admit emergency action immediately.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanInput u; Modelica.Blocks.Interfaces.BooleanInput emergency; Modelica.Blocks.Interfaces.BooleanOutput y(start=false,fixed=true)</p><p><b>Parameters</b> parameter Modelica.Units.SI.Time minOnTime(min=0)=0.2; parameter Modelica.Units.SI.Time minOffTime(min=0)=0.2</p><p><b>Behavior</b> Keep the commanded state for its minimum dwell and admit emergency action immediately</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Outputs retain the units declared at the interface. Numerical values depend on the supplied input and parameter range.</p><p><b>Observables</b> y</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">ProtectionLibrary.Examples.CommandPriorityAndInterlock</a></p></html>"));
+    Documentation(info="<html><p>Hold the output on for minOnTime and off for minOffTime, measured from its latest state change. A normal request changes the state once the corresponding dwell has elapsed. At initialisation, the output follows u without waiting for an off dwell.</p><p>Emergency forces the output true immediately and overrides the off dwell. After emergency clears, normal dwell rules apply from the latest output transition. This emergency path enables the output; its physical interpretation depends on the connected command.</p></html>"));
 end MinimumHold;

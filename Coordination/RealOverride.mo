@@ -1,16 +1,16 @@
 within ProtectionLibrary.Coordination;
-block RealOverride "Override a real command and optionally limit the recovery rate"
-parameter Real safeValue=0;
-  parameter Real recoveryRate(min=0)=0 "Command units per second, zero requests immediate recovery";
-  parameter Modelica.Units.SI.Time trackingTime(min=0)=0.01;
-  parameter Real trackingTolerance(min=0)=1e-5;
-    Modelica.Blocks.Interfaces.RealInput u annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput protect annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.RealOutput y annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+block RealOverride "Immediate real override with optional controlled recovery"
+parameter Real safeValue=0 "Command selected immediately during protection";
+  parameter Real recoveryRate(min=0)=0 "Maximum recovery rate in signal units per second; zero restores u immediately";
+  parameter Modelica.Units.SI.Time trackingTime(min=0)=0.01 "Tracking time constant during final recovery";
+  parameter Real trackingTolerance(min=0)=1e-5 "Maximum tracking error for resuming direct input passage";
+    Modelica.Blocks.Interfaces.RealInput u  "Nominal real command" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput protect  "Select the immediate protective command" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.RealOutput y  "Protective, recovering or nominal command" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
 protected
-  Real recoveringValue;
-  Boolean reached;
-  discrete Boolean recover(start=false,fixed=true);
+  Real recoveringValue "Internal command trajectory during recovery";
+  Boolean reached "Recovery error is within the tracking tolerance";
+  discrete Boolean recover(start=false,fixed=true) "Recovery remains active after protection clears";
 initial equation
   assert(recoveryRate>=0 and trackingTime>0 and trackingTolerance>=0,"Invalid recovery settings.");
 equation
@@ -35,5 +35,5 @@ equation
         Line(points={{-34,-51},{-15,-51},{12,-32},{36,-32}}, color={0,0,127}, thickness=1, pattern=LinePattern.Solid),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Override a real command and optionally limit the recovery rate.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.RealInput u; Modelica.Blocks.Interfaces.BooleanInput protect; Modelica.Blocks.Interfaces.RealOutput y</p><p><b>Parameters</b> parameter Real safeValue=0; parameter Real recoveryRate(min=0)=0 \"Command units per second, zero requests immediate recovery\"; parameter Modelica.Units.SI.Time trackingTime(min=0)=0.01; parameter Real trackingTolerance(min=0)=1e-5</p><p><b>Behavior</b> Override a real command and optionally limit the recovery rate</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> A positive recovery rate applies until the command is rejoined within trackingTolerance. After handoff, normal command passes through.</p><p><b>Observables</b> y</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">ProtectionLibrary.Examples.CommandPriorityAndInterlock</a></p></html>"));
+    Documentation(info="<html><p>Output safeValue immediately while protect is true. With recoveryRate zero, clearing protection immediately restores u. With a positive rate, recover from safeValue using a symmetric rate limit and trackingTime near the target, then pass u directly once the tracking error is within trackingTolerance.</p><p>At initialisation without protection the nominal input passes directly. Every new protection request restarts recovery from safeValue. The limiter applies only during recovery; subsequent nominal input changes pass unchanged. A zero tracking tolerance can leave an asymptotic recovery active indefinitely.</p></html>"));
 end RealOverride;

@@ -1,18 +1,18 @@
 within ProtectionLibrary.Criteria;
-block Persistence "Request only after one uninterrupted qualified dwell"
-parameter Boolean useValidInput=false;
-  parameter Boolean failSafe=true;
-  Modelica.Blocks.Interfaces.BooleanInput valid if useValidInput annotation(Placement(transformation(origin={70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={70,100},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput inputValid annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput condition annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput request annotation(Placement(transformation(origin={-70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={-70,100},extent={{-10,-10},{10,10}})));
+block Persistence "Continuous dwell qualification of a Boolean condition"
+parameter Boolean useValidInput=false "Enable the external validity input";
+  parameter Boolean failSafe=true "Request value used when input validity is false";
+  Modelica.Blocks.Interfaces.BooleanInput valid if useValidInput  "External qualification of the supplied signal" annotation(Placement(transformation(origin={70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={70,100},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput inputValid  "True when the criterion has accepted its required inputs" annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput condition  "Evaluated cause before the invalid-input policy" annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput request  "Protection request after the invalid-input policy" annotation(Placement(transformation(origin={-70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={-70,100},extent={{-10,-10},{10,10}})));
 
-  parameter Modelica.Units.SI.Time holdTime(min=0)=0.2;
-    Modelica.Blocks.Interfaces.BooleanInput u annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  parameter Modelica.Units.SI.Time holdTime(min=0)=0.2 "Required continuous true and valid interval";
+    Modelica.Blocks.Interfaces.BooleanInput u  "Boolean condition to qualify" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
 protected
-  Modelica.Blocks.Interfaces.BooleanInput trusted annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  Boolean pending;
-  discrete Modelica.Units.SI.Time since(start=0,fixed=true);
+  Modelica.Blocks.Interfaces.BooleanInput trusted  "Bound external validity, or true when the input is disabled" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  Boolean pending "True while the condition is externally valid";
+  discrete Modelica.Units.SI.Time since(start=0,fixed=true) "Start of the current qualification interval";
 initial equation
   assert(holdTime>=0,"Negative persistence time.");
 equation
@@ -36,5 +36,5 @@ equation
         Text(extent={{-65,-50},{65,-75}}, textString="dwell", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Request only after one uninterrupted qualified dwell.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanInput valid if useValidInput; Modelica.Blocks.Interfaces.BooleanOutput inputValid; Modelica.Blocks.Interfaces.BooleanOutput condition; Modelica.Blocks.Interfaces.BooleanOutput request; Modelica.Blocks.Interfaces.BooleanInput u</p><p><b>Parameters</b> parameter Boolean useValidInput=false; parameter Boolean failSafe=true; parameter Modelica.Units.SI.Time holdTime(min=0)=0.2</p><p><b>Behavior</b> Request only after one uninterrupted qualified dwell</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> The protection request may be a fail-safe response to invalid data. inputValid and condition expose that distinction.</p><p><b>Observables</b> inputValid, condition, request</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.ThresholdLatchReset\">ProtectionLibrary.Examples.ThresholdLatchReset</a></p></html>"));
+    Documentation(info="<html><p>Qualify <code>u</code> only after it and the optional validity input have remained true continuously for <code>holdTime</code>. Initialisation starts a fresh dwell. A false condition or invalid input clears qualification, and the next accepted true interval starts again.</p><p><code>condition</code> remains true while the qualifying inputs remain true. <code>request</code> takes <code>failSafe</code> whenever input validity is false, so that invalid-data response bypasses the dwell.</p></html>"));
 end Persistence;

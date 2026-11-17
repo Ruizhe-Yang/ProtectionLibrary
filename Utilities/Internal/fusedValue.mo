@@ -1,14 +1,14 @@
 within ProtectionLibrary.Utilities.Internal;
-function fusedValue "对同单位向量计算中位数、均值、截尾或加权均值"
-  input Real x[:];
-  input ProtectionLibrary.Utilities.Types.FusionMethod method;
-  input Integer trimEachSide;
-  input Real weights[size(x,1)];
-  output Real y;
+function fusedValue "Fuse a vector without qualification or fallback"
+  input Real x[:] "Complete finite measurement vector in a common unit";
+  input ProtectionLibrary.Utilities.Types.FusionMethod method "Fusion algorithm for the complete vector";
+  input Integer trimEachSide "Number removed from each sorted end for Trimmed";
+  input Real weights[size(x,1)] "Weights normalised by their total for Weighted";
+  output Real y "Fused value";
 protected
-  Integer n = size(x,1);
-  Integer middle;
-  Real sorted[size(x,1)];
+  Integer n = size(x,1) "Number of vector entries";
+  Integer middle "Lower middle index for the median";
+  Real sorted[size(x,1)] "Vector sorted in ascending order";
 algorithm
   if method == ProtectionLibrary.Utilities.Types.FusionMethod.Mean then
     y := sum(x)/n;
@@ -39,18 +39,5 @@ algorithm
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
     Diagram(coordinateSystem(extent={{-100,-100},{100,100}})),
-    Documentation(info="<html>
-<p>对同单位向量计算中位数、均值、截尾或加权均值</p>
-<p><b>行为</b> 对同单位向量计算中位数、均值、截尾或加权均值。</p>
-<p><b>最小用法</b> 由本库组件按源码中的参数和接口装配。</p>
-<p><b>适用边界</b> 实现细节随本库版本演进。</p>
-<p>接口及方向</p>
-<ul>
-<li><code>input Real x[:]</code></li>
-<li><code>input ProtectionLibrary.Utilities.Types.FusionMethod method</code></li>
-<li><code>input Integer trimEachSide</code></li>
-<li><code>input Real weights[size(x,1)]</code></li>
-<li><code>output Real y</code></li>
-</ul>
-</html>"));
+    Documentation(info="<html><p>Calculate the arithmetic mean, median, trimmed mean or normalised weighted mean of the complete vector <code>x</code>. An even median averages the two middle values. Trimming removes <code>trimEachSide</code> entries from each sorted end.</p><p>The caller must provide a nonempty finite vector, valid trimming with at least one remaining entry, and a nonzero total weight for Weighted. No qualification, parameter validation, availability output or fallback is provided.</p></html>"));
 end fusedValue;

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="-115 -115 230 230" role="img" aria-labelledby="title"><title id="title">ReliefValve: original Modelica icon</title><polyline points="-100,-0 -32,-0" fill="none" stroke="rgb(64,64,64)" stroke-width="2.24" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="32,-0 100,-0" fill="none" stroke="rgb(64,64,64)" stroke-width="2.24" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="-32,-24 -32,24 32,-24 32,24 -32,-24" fill="rgb(235,235,235)" stroke="rgb(64,64,64)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="0,-0 0,-30" fill="none" stroke="rgb(64,64,64)" stroke-width="2.24" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="0,-30 -12,-37 12,-44 -12,-51 12,-58 0,-65" fill="none" stroke="rgb(64,64,64)" stroke-width="2.24" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="-20,-66 20,-66" fill="none" stroke="rgb(64,64,64)" stroke-width="2.24" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="0" y="50.5" font-family="Arial,DejaVu Sans,sans-serif" font-size="21.06" text-anchor="middle" dominant-baseline="central" fill="rgb(64,64,64)">dp</text></svg>

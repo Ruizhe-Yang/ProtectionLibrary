@@ -1,5 +1,5 @@
 within ProtectionLibrary;
-package Fluid "Fluid"
+package Fluid "Fluid command limits and linear protective flow paths"
   extends Modelica.Icons.Package;
   annotation(Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
       graphics={
@@ -9,5 +9,6 @@ package Fluid "Fluid"
         Line(points={{0,0},{0,19.32}}, color={64,64,64}, thickness=0.8, pattern=LinePattern.Solid),
         Line(points={{0,19.32},{-7.728,23.828},{7.728,28.336},{-7.728,32.844},{7.728,37.352},{0,41.86}}, color={64,64,64}, thickness=0.8, pattern=LinePattern.Solid),
         Line(points={{-12.88,42.504},{12.88,42.504}}, color={64,64,64}, thickness=0.8, pattern=LinePattern.Solid)
-      }));
+      }),
+    Documentation(info="<html><p>A mass-flow command limiter and linear fluid valves for isolation, bypass and pressure relief. Fluid-port models use a replaceable Medium, reversible stream transport and no internal fluid storage.</p></html>"));
 end Fluid;

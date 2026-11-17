@@ -1,12 +1,12 @@
 within ProtectionLibrary.Criteria;
-block OperatingWindow "Qualify a local request by mode without suppressing the emergency path"
-parameter Integer modeId=1;
-    Modelica.Blocks.Interfaces.BooleanInput localRequest annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput enabled annotation(Placement(transformation(origin={-100,23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,23.33333},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.IntegerInput mode annotation(Placement(transformation(origin={-100,-23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-23.33333},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput emergency annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput applicable annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput request annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
+block OperatingWindow "Mode-qualified request with an independent emergency path"
+parameter Integer modeId=1 "Operating mode in which the local request applies";
+    Modelica.Blocks.Interfaces.BooleanInput localRequest  "Request qualified by mode and enable" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput enabled  "Enable the local operating criterion" annotation(Placement(transformation(origin={-100,23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,23.33333},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.IntegerInput mode  "Current integer operating-mode code" annotation(Placement(transformation(origin={-100,-23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-23.33333},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput emergency  "Request that bypasses mode and enable qualification" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput applicable  "True when enabled in the selected mode" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput request  "Emergency or qualified local protection request" annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
 equation
   applicable=enabled and mode==modeId;
   request=emergency or (applicable and localRequest);
@@ -24,5 +24,5 @@ equation
         Line(points={{66,1},{76,1}}, color={0,0,127}, thickness=0.8, pattern=LinePattern.Solid, arrow={Arrow.None,Arrow.Filled}),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Qualify a local request by mode without suppressing the emergency path.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanInput localRequest; Modelica.Blocks.Interfaces.BooleanInput enabled; Modelica.Blocks.Interfaces.IntegerInput mode; Modelica.Blocks.Interfaces.BooleanInput emergency; Modelica.Blocks.Interfaces.BooleanOutput applicable; Modelica.Blocks.Interfaces.BooleanOutput request</p><p><b>Parameters</b> parameter Integer modeId=1</p><p><b>Behavior</b> Qualify a local request by mode without suppressing the emergency path</p><p><b>Initialization</b> Evaluated from the current inputs and parameter bindings.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Outputs retain the units declared at the interface. Numerical values depend on the supplied input and parameter range.</p><p><b>Observables</b> applicable, request</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.ThresholdLatchReset\">ProtectionLibrary.Examples.ThresholdLatchReset</a></p></html>"));
+    Documentation(info="<html><p>Set <code>applicable</code> when enabled and the integer mode equals <code>modeId</code>. A local request is passed only while applicable; an emergency request is passed regardless of mode or enable.</p><p>The block is combinational and has no latch or timing delay.</p></html>"));
 end OperatingWindow;

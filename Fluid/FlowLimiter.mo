@@ -1,10 +1,10 @@
 within ProtectionLibrary.Fluid;
-block FlowLimiter "Limit a signed mass flow request"
-parameter Modelica.Units.SI.MassFlowRate lower=-1;
-  parameter Modelica.Units.SI.MassFlowRate upper=1;
-  Modelica.Blocks.Interfaces.RealInput u(unit="kg/s") annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.RealOutput y(unit="kg/s") annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput limited annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
+block FlowLimiter "Saturation of a signed mass-flow command"
+parameter Modelica.Units.SI.MassFlowRate lower=-1 "Lower command bound";
+  parameter Modelica.Units.SI.MassFlowRate upper=1 "Upper command bound";
+  Modelica.Blocks.Interfaces.RealInput u(unit="kg/s")  "Requested mass-flow" annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.RealOutput y(unit="kg/s")  "Limited mass-flow command" annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput limited  "True when the output differs from the request" annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
 initial equation
   assert(lower<=upper,"Invalid command limits.");
 equation
@@ -20,5 +20,5 @@ equation
         Text(extent={{-6,74},{52,48}}, textString="m", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Limit a signed mass flow request.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.RealInput u(unit=\"kg/s\"); Modelica.Blocks.Interfaces.RealOutput y(unit=\"kg/s\"); Modelica.Blocks.Interfaces.BooleanOutput limited</p><p><b>Parameters</b> parameter Modelica.Units.SI.MassFlowRate lower=-1; parameter Modelica.Units.SI.MassFlowRate upper=1</p><p><b>Behavior</b> Limit a signed mass flow request</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Limits apply to the command. Verify the actual physical action independently.</p><p><b>Observables</b> y, limited</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.FluidIsolationAndRelief\">ProtectionLibrary.Examples.FluidIsolationAndRelief</a></p></html>"));
+    Documentation(info="<html><p>Limit the mass-flow request <code>u</code> to the inclusive interval [lower,upper]. The bounds may be asymmetric. <code>limited</code> is true whenever y differs from u.</p><p>Use u and y in kilograms per second. This is a signal limiter; it does not impose the same bound directly on a connected physical network.</p></html>"));
 end FlowLimiter;

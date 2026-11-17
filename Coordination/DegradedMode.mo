@@ -1,15 +1,15 @@
 within ProtectionLibrary.Coordination;
-block DegradedMode "Enter degraded or safe state according to available capability"
-Modelica.Blocks.Interfaces.BooleanInput fullCapability annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput minimumCapability annotation(Placement(transformation(origin={-100,23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,23.33333},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput protect annotation(Placement(transformation(origin={-100,-23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-23.33333},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput restoreAllowed annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.IntegerOutput mode annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-  output ProtectionLibrary.Utilities.Types.DegradedState state(start=ProtectionLibrary.Utilities.Types.DegradedState.Normal,fixed=true);
+block DegradedMode "Capability-based degraded and safe-state selection"
+Modelica.Blocks.Interfaces.BooleanInput fullCapability  "Full operating capability is available" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput minimumCapability  "Minimum capability for degraded operation is available" annotation(Placement(transformation(origin={-100,23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,23.33333},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput protect  "Request the Safe state" annotation(Placement(transformation(origin={-100,-23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-23.33333},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput restoreAllowed  "Permit return to Normal when full capability is available" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.IntegerOutput mode  "Integer representation of the selected DegradedState" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+  output ProtectionLibrary.Utilities.Types.DegradedState state(start=ProtectionLibrary.Utilities.Types.DegradedState.Normal,fixed=true) "Selected Normal, Degraded or Safe state";
 protected
-  Boolean safe;
-  Boolean degraded;
-  Boolean canRestore;
+  Boolean safe "Safe-state condition";
+  Boolean degraded "Full capability is unavailable";
+  Boolean canRestore "All conditions for return to Normal are satisfied";
 equation
   safe=protect or not minimumCapability;
   degraded=not fullCapability;
@@ -34,5 +34,5 @@ equation
         Text(extent={{-8,-47},{20,-71}}, textString="S", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Enter degraded or safe state according to available capability.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanInput fullCapability; Modelica.Blocks.Interfaces.BooleanInput minimumCapability; Modelica.Blocks.Interfaces.BooleanInput protect; Modelica.Blocks.Interfaces.BooleanInput restoreAllowed; Modelica.Blocks.Interfaces.IntegerOutput mode; output ProtectionLibrary.Utilities.Types.DegradedState state(start=ProtectionLibrary.Utilities.Types.DegradedState.Normal,fixed=true)</p><p><b>Parameters</b> No tuning parameters; use the declared input contract.</p><p><b>Behavior</b> Enter degraded or safe state according to available capability</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Outputs retain the units declared at the interface. Numerical values depend on the supplied input and parameter range.</p><p><b>Observables</b> mode</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">ProtectionLibrary.Examples.CommandPriorityAndInterlock</a></p></html>"));
+    Documentation(info="<html><p>Select Safe whenever protection is requested or minimum capability is unavailable. With minimum capability available but full capability absent, select Degraded. Normal is restored only when both capabilities and restoreAllowed are true and protection is clear.</p><p>Otherwise retain the previous state. Restoration from Safe to Degraded does not require restoreAllowed; that input qualifies return to Normal. <code>mode</code> is the integer representation of the declared DegradedState enumeration.</p></html>"));
 end DegradedMode;

@@ -1,5 +1,5 @@
 within ProtectionLibrary;
-package Mechanics "Mechanics"
+package Mechanics "Mechanical criteria, command limits and contact devices"
   extends Modelica.Icons.Package;
   annotation(Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
       graphics={
@@ -10,5 +10,6 @@ package Mechanics "Mechanics"
         Rectangle(extent={{-20.3412,-25.6312},{20.3412,-18.2344}}, lineColor={64,64,64}, fillColor={64,64,64}, fillPattern=FillPattern.Solid, pattern=LinePattern.Solid, lineThickness=0.5, radius=0),
         Line(points={{0,-26.2476},{0,-51.52}}, color={128,128,128}, thickness=0.8, pattern=LinePattern.Solid),
         Line(points={{-33.902,41.5564},{-33.902,-21.3164},{0,-21.3164}}, color={128,128,128}, thickness=0.7, pattern=LinePattern.Solid)
-      }));
+      }),
+    Documentation(info="<html><p>Mechanical command processing, speed and travel criteria, viscous brakes and compliant travel stops. Signal blocks produce requests or command values; flange-based devices act through mechanical connections.</p></html>"));
 end Mechanics;

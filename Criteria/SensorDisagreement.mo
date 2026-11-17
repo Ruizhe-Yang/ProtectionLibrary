@@ -1,20 +1,20 @@
 within ProtectionLibrary.Criteria;
-block SensorDisagreement "Check spread only among sufficiently valid channels"
-parameter Integer n(min=2)=3;
-  parameter Real tolerance(min=0)=0.2;
-  parameter Boolean failSafe=true;
-  parameter Boolean useValidInput=false;
-    Modelica.Blocks.Interfaces.RealInput u[n] annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput valid[n] if useValidInput annotation(Placement(transformation(origin={70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={70,100},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput inputValid annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput condition annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput request annotation(Placement(transformation(origin={-70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={-70,100},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.RealOutput spread annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
+block SensorDisagreement "Spread criterion over valid finite sensor channels"
+parameter Integer n(min=2)=3 "Number of comparable sensor channels";
+  parameter Real tolerance(min=0)=0.2 "Largest accepted spread between retained channels";
+  parameter Boolean failSafe=true "Request value used when input validity is false";
+  parameter Boolean useValidInput=false "Enable the external validity input";
+    Modelica.Blocks.Interfaces.RealInput u[n]  "Comparable measurements in a common unit" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput valid[n] if useValidInput  "External validity flags for individual channels" annotation(Placement(transformation(origin={70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={70,100},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput inputValid  "True when the criterion has accepted its required inputs" annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput condition  "Evaluated cause before the invalid-input policy" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput request  "Protection request after the invalid-input policy" annotation(Placement(transformation(origin={-70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={-70,100},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.RealOutput spread  "Maximum minus minimum accepted value, or zero" annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
 protected
-  Modelica.Blocks.Interfaces.BooleanInput trust[n] annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  Real lo;
-  Real hi;
-  Integer count;
+  Modelica.Blocks.Interfaces.BooleanInput trust[n]  "Bound channel validity flags" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  Real lo "Lowest retained finite value";
+  Real hi "Highest retained finite value";
+  Integer count "Number of retained finite channels";
 initial equation
   assert(n>=2 and tolerance>=0,"Invalid disagreement criterion.");
 equation
@@ -38,5 +38,5 @@ equation
         Text(extent={{-56,72},{60,48}}, textString="spread", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Check spread only among sufficiently valid channels.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.RealInput u[n]; Modelica.Blocks.Interfaces.BooleanInput valid[n] if useValidInput; Modelica.Blocks.Interfaces.BooleanOutput inputValid; Modelica.Blocks.Interfaces.BooleanOutput condition; Modelica.Blocks.Interfaces.BooleanOutput request; Modelica.Blocks.Interfaces.RealOutput spread</p><p><b>Parameters</b> parameter Integer n(min=2)=3; parameter Real tolerance(min=0)=0.2; parameter Boolean failSafe=true; parameter Boolean useValidInput=false</p><p><b>Behavior</b> Check spread only among sufficiently valid channels</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> The spread detects disagreement. It does not identify which sensor is faulty.</p><p><b>Observables</b> inputValid, condition, request, spread</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.ThresholdLatchReset\">ProtectionLibrary.Examples.ThresholdLatchReset</a></p></html>"));
+    Documentation(info="<html><p>Exclude channels whose optional validity flag is false or whose magnitude is not finite. With at least two remaining channels, <code>spread</code> is the maximum minus the minimum and <code>condition</code> is true when the spread strictly exceeds <code>tolerance</code>.</p><p>With fewer than two accepted channels, input validity and condition are false, spread is zero and the request takes <code>failSafe</code>. No channel is selected as the correct measurement.</p></html>"));
 end SensorDisagreement;

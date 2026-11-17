@@ -1,19 +1,19 @@
 within ProtectionLibrary.Fluid;
-model BypassValve "Open a finite bypass on a protection request"
+model BypassValve "Commanded opening of a linear fluid bypass"
 replaceable package Medium=Modelica.Media.Water.ConstantPropertyLiquidWater constrainedby Modelica.Media.Interfaces.PartialMedium;
-  parameter Real Gopen(unit="kg/(s.Pa)",min=0)=1e-5;
-  parameter Real Gleak(unit="kg/(s.Pa)",min=0)=1e-10;
-  parameter Modelica.Units.SI.Time openingTime(min=0)=0.05;
-  parameter Real initialOpening(min=0,max=1)=0;
-  Modelica.Fluid.Interfaces.FluidPort_a port_a(redeclare package Medium=Medium) annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Fluid.Interfaces.FluidPort_b port_b(redeclare package Medium=Medium) annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-    Modelica.Blocks.Interfaces.RealOutput opening(min=0,max=1) annotation(Placement(transformation(origin={0,-100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,-100},extent={{-10,-10},{10,10}})));
-  Modelica.Units.SI.MassFlowRate massFlow;
-  Modelica.Units.SI.PressureDifference dp;
-  Modelica.Blocks.Interfaces.BooleanInput command annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
+  parameter Real Gopen(unit="kg/(s.Pa)",min=0)=1e-5 "Mass-flow conductance at full opening";
+  parameter Real Gleak(unit="kg/(s.Pa)",min=0)=1e-10 "Residual mass-flow conductance at zero opening";
+  parameter Modelica.Units.SI.Time openingTime(min=0)=0.05 "First-order actuator time constant; zero selects an immediate response";
+  parameter Real initialOpening(min=0,max=1)=0 "Initial actuator state for a nonzero time constant";
+  Modelica.Fluid.Interfaces.FluidPort_a port_a(redeclare package Medium=Medium)  "First fluid port; positive mass flow enters here" annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Fluid.Interfaces.FluidPort_b port_b(redeclare package Medium=Medium)  "Second fluid port" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+    Modelica.Blocks.Interfaces.RealOutput opening(min=0,max=1)  "Valve opening fraction used in the conductance law" annotation(Placement(transformation(origin={0,-100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,-100},extent={{-10,-10},{10,10}})));
+  Modelica.Units.SI.MassFlowRate massFlow "Signed mass flow from port_a to port_b";
+  Modelica.Units.SI.PressureDifference dp "Pressure at port_a minus pressure at port_b";
+  Modelica.Blocks.Interfaces.BooleanInput command  "Request the valve to open" annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
 protected
-  Real actuator(start=initialOpening,fixed=true);
-  Real target;
+  Real actuator(start=initialOpening,fixed=true) "Actuator state with the declared initial opening";
+  Real target "Requested valve opening fraction";
 initial equation
   assert(Gopen>0 and Gleak>=0 and Gleak<=Gopen and openingTime>=0,"Invalid valve settings.");
 equation
@@ -42,5 +42,5 @@ equation
         Line(points={{-24,-44},{24,-44}}, color={64,64,64}, thickness=0.8, pattern=LinePattern.Solid, arrow={Arrow.Filled,Arrow.Filled}),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Open a finite bypass on a protection request.</p><p><b>Interfaces</b> Modelica.Fluid.Interfaces.FluidPort_a port_a(redeclare package Medium=Medium); Modelica.Fluid.Interfaces.FluidPort_b port_b(redeclare package Medium=Medium); Modelica.Blocks.Interfaces.RealOutput opening(min=0,max=1); Modelica.Blocks.Interfaces.BooleanInput command</p><p><b>Parameters</b> replaceable package Medium=Modelica.Media.Water.ConstantPropertyLiquidWater constrainedby Modelica.Media.Interfaces.PartialMedium; parameter Real Gopen(unit=\"kg/(s.Pa)\",min=0)=1e-5; parameter Real Gleak(unit=\"kg/(s.Pa)\",min=0)=1e-10; parameter Modelica.Units.SI.Time openingTime(min=0)=0.05; parameter Real initialOpening(min=0,max=1)=0</p><p><b>Behavior</b> Open a finite bypass on a protection request</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> A linear no-storage valve approximation. Connect the intended environment explicitly. Mass, enthalpy and composition follow either flow direction.</p><p><b>Observables</b> opening</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.FluidIsolationAndRelief\">ProtectionLibrary.Examples.FluidIsolationAndRelief</a></p></html>"));
+    Documentation(info="<html><p>Set the target opening to one while command=true and zero otherwise. With openingTime&gt;0, the actuator approaches the target exponentially; openingTime is a time constant, not a full-stroke duration. With openingTime=0, opening follows the target immediately.</p><p>Mass flow is <code>(Gleak+(Gopen-Gleak)*opening)*dp</code>, positive from port_a to port_b. Redeclare a compatible Medium at both connections. The linear, isenthalpic flow path transports composition and trace substances in either direction and has no fluid storage; a positive Gleak permits leakage.</p></html>"));
 end BypassValve;

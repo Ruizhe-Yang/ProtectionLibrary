@@ -1,13 +1,13 @@
 within ProtectionLibrary.Coordination;
-block OnOffDelay "Require separate continuous dwell times for rising and falling states"
-parameter Modelica.Units.SI.Time onDelay(min=0)=0.1;
-  parameter Modelica.Units.SI.Time offDelay(min=0)=0.1;
-    Modelica.Blocks.Interfaces.BooleanInput u annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput y(start=false,fixed=true) annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+block OnOffDelay "Separate continuous delays for rising and falling commands"
+parameter Modelica.Units.SI.Time onDelay(min=0)=0.1 "Required continuously true input interval";
+  parameter Modelica.Units.SI.Time offDelay(min=0)=0.1 "Required continuously false input interval";
+    Modelica.Blocks.Interfaces.BooleanInput u  "Boolean condition to delay" annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput y(start=false,fixed=true)  "Command after rising or falling qualification" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
 protected
-  discrete Modelica.Units.SI.Time changed(start=0,fixed=true);
-  Boolean riseQualified;
-  Boolean fallQualified;
+  discrete Modelica.Units.SI.Time changed(start=0,fixed=true) "Time of initialisation or the latest input change";
+  Boolean riseQualified "True input has satisfied the on delay";
+  Boolean fallQualified "False input has satisfied the off delay";
 initial equation
   assert(onDelay>=0 and offDelay>=0,"Invalid on/off delay.");
 equation
@@ -26,5 +26,5 @@ equation
         Line(points={{17,10},{45,10}}, color={64,64,64}, thickness=0.7, pattern=LinePattern.Solid, arrow={Arrow.None,Arrow.Filled}),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Require separate continuous dwell times for rising and falling states.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanInput u; Modelica.Blocks.Interfaces.BooleanOutput y(start=false,fixed=true)</p><p><b>Parameters</b> parameter Modelica.Units.SI.Time onDelay(min=0)=0.1; parameter Modelica.Units.SI.Time offDelay(min=0)=0.1</p><p><b>Behavior</b> Require separate continuous dwell times for rising and falling states</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Outputs retain the units declared at the interface. Numerical values depend on the supplied input and parameter range.</p><p><b>Observables</b> y</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">ProtectionLibrary.Examples.CommandPriorityAndInterlock</a></p></html>"));
+    Documentation(info="<html><p>Change y to true only after u has remained true for onDelay, and to false only after u has remained false for offDelay. Every input change restarts the relevant interval; shorter excursions leave the output unchanged.</p><p>At initialisation the output is false unless an initially true input qualifies immediately with zero on delay. This delays changes of the input condition rather than enforcing time since the latest output transition.</p></html>"));
 end OnOffDelay;

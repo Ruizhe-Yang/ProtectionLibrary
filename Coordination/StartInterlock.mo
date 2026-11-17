@@ -1,14 +1,14 @@
 within ProtectionLibrary.Coordination;
-block StartInterlock "Combine every permissive with a start request and independent trip priority"
-parameter Integer n(min=1)=2;
-    Modelica.Blocks.Interfaces.BooleanInput startRequest annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput permissive[n] annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput trip annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput startPermitted annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput refusedByTrip annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput refusedByPermission annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
+block StartInterlock "Start request gated by all permissives and trip clearance"
+parameter Integer n(min=1)=2 "Number of required start permissives";
+    Modelica.Blocks.Interfaces.BooleanInput startRequest  "Request to initiate operation" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput permissive[n]  "Individual conditions required for a permitted start" annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput trip  "Trip condition with priority over a start" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput startPermitted  "Start request with every permissive true and trip false" annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput refusedByTrip  "A start request is present while trip is true" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput refusedByPermission  "A start request is present with at least one missing permissive" annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
 protected
-  Boolean ready;
+  Boolean ready "Every start permissive is true";
 equation
   ready=sum(if permissive[i] then 1 else 0 for i in 1:n)==n;
   refusedByTrip=startRequest and trip;
@@ -27,5 +27,5 @@ equation
         Line(points={{7,62},{25,62}}, color={64,64,64}, thickness=0.7, pattern=LinePattern.Solid),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Combine every permissive with a start request and independent trip priority.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanInput startRequest; Modelica.Blocks.Interfaces.BooleanInput permissive[n]; Modelica.Blocks.Interfaces.BooleanInput trip; Modelica.Blocks.Interfaces.BooleanOutput startPermitted; Modelica.Blocks.Interfaces.BooleanOutput refusedByTrip; Modelica.Blocks.Interfaces.BooleanOutput refusedByPermission</p><p><b>Parameters</b> parameter Integer n(min=1)=2</p><p><b>Behavior</b> Combine every permissive with a start request and independent trip priority</p><p><b>Initialization</b> Evaluated from the current inputs and parameter bindings.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Outputs retain the units declared at the interface. Numerical values depend on the supplied input and parameter range.</p><p><b>Observables</b> startPermitted, refusedByTrip, refusedByPermission</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">ProtectionLibrary.Examples.CommandPriorityAndInterlock</a></p></html>"));
+    Documentation(info="<html><p>Pass startRequest only when every permissive is true and trip is false. The block responds to current levels and does not latch a start.</p><p>refusedByTrip and refusedByPermission are independent diagnostic causes during a start request; both may be true simultaneously.</p></html>"));
 end StartInterlock;

@@ -1,5 +1,5 @@
 within ProtectionLibrary;
-package Voting "Voting"
+package Voting "Boolean voting and analogue measurement fusion"
   extends Modelica.Icons.Package;
   annotation(Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
       graphics={
@@ -12,5 +12,5 @@ package Voting "Voting"
         Line(points={{-52.44,-44.16},{-11.96,-44.16}}, color={128,128,128}, thickness=0.7, pattern=LinePattern.Solid),
         Line(points={{52.44,0},{69,0}}, color={64,64,64}, thickness=0.8, pattern=LinePattern.Solid, arrow={Arrow.None,Arrow.Filled}),
         Text(extent={{-6.44,23.92},{47.84,-7.36}}, textString=">= 2", textColor={64,64,64}, fontSize=0)
-      }));
+      }), Documentation(info="<html><p>Combine Boolean requests with fixed or configurable voting thresholds, or fuse qualified analogue measurements. Select the channel-qualification and fallback semantics appropriate to the receiving model.</p></html>"));
 end Voting;

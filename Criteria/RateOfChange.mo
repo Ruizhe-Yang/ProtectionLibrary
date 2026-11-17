@@ -1,23 +1,23 @@
 within ProtectionLibrary.Criteria;
-block RateOfChange "Check an explicitly sampled finite difference"
-parameter Boolean useValidInput=false;
-  parameter Boolean failSafe=true;
-  Modelica.Blocks.Interfaces.BooleanInput valid if useValidInput annotation(Placement(transformation(origin={70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={70,100},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput inputValid annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput condition annotation(Placement(transformation(origin={100,23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,23.33333},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput request annotation(Placement(transformation(origin={-70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={-70,100},extent={{-10,-10},{10,10}})));
+block RateOfChange "Sampled finite-difference rate criterion"
+parameter Boolean useValidInput=false "Enable the external validity input";
+  parameter Boolean failSafe=true "Request value used when input validity is false";
+  Modelica.Blocks.Interfaces.BooleanInput valid if useValidInput  "External qualification of the supplied signal" annotation(Placement(transformation(origin={70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={70,100},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput inputValid  "True when the criterion has accepted its required inputs" annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput condition  "Evaluated cause before the invalid-input policy" annotation(Placement(transformation(origin={100,23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,23.33333},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput request  "Protection request after the invalid-input policy" annotation(Placement(transformation(origin={-70,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={-70,100},extent={{-10,-10},{10,10}})));
 
-  parameter Modelica.Units.SI.Time samplePeriod(min=0)=0.01;
-  parameter Modelica.Units.SI.Time sampleStart=0;
-  parameter Real threshold(min=0)=1;
-  parameter ProtectionLibrary.Utilities.Types.RateSense sense=ProtectionLibrary.Utilities.Types.RateSense.Absolute;
-    Modelica.Blocks.Interfaces.RealInput u annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.RealOutput rate(start=0,fixed=true) annotation(Placement(transformation(origin={100,-23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-23.33333},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput available(start=false,fixed=true) annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
+  parameter Modelica.Units.SI.Time samplePeriod(min=0)=0.01 "Positive interval between rate samples";
+  parameter Modelica.Units.SI.Time sampleStart=0 "First scheduled sample time";
+  parameter Real threshold(min=0)=1 "Inclusive threshold in signal units per second";
+  parameter ProtectionLibrary.Utilities.Types.RateSense sense=ProtectionLibrary.Utilities.Types.RateSense.Absolute "Absolute, rising or falling rate selection";
+    Modelica.Blocks.Interfaces.RealInput u  "Signal to assess" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.RealOutput rate(start=0,fixed=true)  "Held finite-difference rate from the latest sample" annotation(Placement(transformation(origin={100,-23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-23.33333},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput available(start=false,fixed=true)  "Two consecutive samples have true validity flags" annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
 protected
-  Modelica.Blocks.Interfaces.BooleanInput trusted annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  discrete Real last(start=0,fixed=true);
-  discrete Boolean seen(start=false,fixed=true);
+  Modelica.Blocks.Interfaces.BooleanInput trusted  "Bound external validity, or true when the input is disabled" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  discrete Real last(start=0,fixed=true) "Previous sampled signal value";
+  discrete Boolean seen(start=false,fixed=true) "Validity flag at the previous sample";
 initial equation
   assert(samplePeriod>0 and threshold>=0,"Invalid rate criterion.");
 equation
@@ -44,5 +44,5 @@ equation
         Text(extent={{-26,67},{62,40}}, textString="du/dt", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Check an explicitly sampled finite difference.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanInput valid if useValidInput; Modelica.Blocks.Interfaces.BooleanOutput inputValid; Modelica.Blocks.Interfaces.BooleanOutput condition; Modelica.Blocks.Interfaces.BooleanOutput request; Modelica.Blocks.Interfaces.RealInput u; Modelica.Blocks.Interfaces.RealOutput rate(start=0,fixed=true); Modelica.Blocks.Interfaces.BooleanOutput available(start=false,fixed=true)</p><p><b>Parameters</b> parameter Boolean useValidInput=false; parameter Boolean failSafe=true; parameter Modelica.Units.SI.Time samplePeriod(min=0)=0.01; parameter Modelica.Units.SI.Time sampleStart=0; parameter Real threshold(min=0)=1; parameter ProtectionLibrary.Utilities.Types.RateSense sense=ProtectionLibrary.Utilities.Types.RateSense.Absolute</p><p><b>Behavior</b> Check an explicitly sampled finite difference</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> The protection request may be a fail-safe response to invalid data. inputValid and condition expose that distinction.</p><p><b>Observables</b> inputValid, condition, request, rate, available</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.ThresholdLatchReset\">ProtectionLibrary.Examples.ThresholdLatchReset</a></p></html>"));
+    Documentation(info="<html><p>At <code>sampleStart+k*samplePeriod</code>, calculate the difference between consecutive externally trusted samples divided by the positive sample period. The first trusted sample establishes history; <code>available</code> becomes true only after a second consecutive trusted sample. An untrusted sample breaks that sequence.</p><p>Select absolute, rising or falling rate and compare it inclusively with <code>threshold</code>. Rate and availability are held between samples. The request uses the current finite-value and validity check; sampled history and availability use the validity flag alone. Supply finite samples or mark them invalid explicitly.</p></html>"));
 end RateOfChange;

@@ -1,9 +1,9 @@
 within ProtectionLibrary.Electrical;
-block CurrentLimiter "Limit a signed electrical current request"
-parameter Modelica.Units.SI.Current Imax(min=0)=2;
-  Modelica.Blocks.Interfaces.RealInput u(unit="A") annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.RealOutput y(unit="A") annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput limited annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
+block CurrentLimiter "Symmetric saturation of a current command"
+parameter Modelica.Units.SI.Current Imax(min=0)=2 "Maximum absolute current command";
+  Modelica.Blocks.Interfaces.RealInput u(unit="A")  "Requested current" annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.RealOutput y(unit="A")  "Limited current command" annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput limited  "True when the output differs from the requested current" annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
 initial equation
   assert(Imax>=0,"Invalid command limits.");
 equation
@@ -19,5 +19,5 @@ equation
         Text(extent={{-6,74},{52,48}}, textString="I", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Limit a signed electrical current request.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.RealInput u(unit=\"A\"); Modelica.Blocks.Interfaces.RealOutput y(unit=\"A\"); Modelica.Blocks.Interfaces.BooleanOutput limited</p><p><b>Parameters</b> parameter Modelica.Units.SI.Current Imax(min=0)=2</p><p><b>Behavior</b> Limit a signed electrical current request</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Limits apply to the command. Verify the actual physical action independently.</p><p><b>Observables</b> y, limited</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.ElectricalTripAndDump\">ProtectionLibrary.Examples.ElectricalTripAndDump</a></p></html>"));
+    Documentation(info="<html><p>Limit <code>u</code> to the interval [-Imax,Imax]. The output <code>limited</code> is true whenever the limited command differs from the input, including either sign of saturation.</p><p>Connect the output to a current-command input. This signal block contains no electrical pins and does not constrain the current in a physical circuit directly.</p></html>"));
 end CurrentLimiter;

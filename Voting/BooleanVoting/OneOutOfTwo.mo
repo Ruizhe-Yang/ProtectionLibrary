@@ -1,18 +1,18 @@
 within ProtectionLibrary.Voting.BooleanVoting;
-block OneOutOfTwo "Boolean 1-out-of-2 protection vote"
-final parameter Integer n(min=1)=2;
-  final parameter Integer m(min=1,max=n)=1;
-  parameter Integer minValid(min=1,max=n)=m;
-  parameter Boolean useValidInput=false;
-  parameter Boolean invalidVote=true;
-    Modelica.Blocks.Interfaces.BooleanInput u[n] annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput valid[n] if useValidInput annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput y annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.IntegerOutput nValid annotation(Placement(transformation(origin={100,23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,23.33333},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput degraded annotation(Placement(transformation(origin={100,-23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-23.33333},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput enoughValid annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
+block OneOutOfTwo "Boolean 1-out-of-2 vote with invalid-channel substitution"
+final parameter Integer n(min=1)=2 "Number of vote channels";
+  final parameter Integer m(min=1,max=n)=1 "Minimum number of true effective votes";
+  parameter Integer minValid(min=1,max=n)=m "Qualified-channel count required by enoughValid";
+  parameter Boolean useValidInput=false "Expose external channel-qualification inputs";
+  parameter Boolean invalidVote=true "Vote substituted for each unqualified channel";
+    Modelica.Blocks.Interfaces.BooleanInput u[n]  "Boolean channel requests" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput valid[n] if useValidInput  "External channel qualification" annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput y  "True when the effective true-vote count reaches m" annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.IntegerOutput nValid  "Number of qualified channels" annotation(Placement(transformation(origin={100,23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,23.33333},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput degraded  "True when any channel is unqualified" annotation(Placement(transformation(origin={100,-23.33333},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-23.33333},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput enoughValid  "True when nValid reaches minValid, independent of y" annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
 protected
-  Modelica.Blocks.Interfaces.BooleanInput qualified[n] annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput qualified[n]  "Qualification vector after optional-input binding" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
 initial equation
   assert(n>=1 and m>=1 and m<=n and minValid>=1 and minValid<=n,"Invalid vote dimensions.");
 equation
@@ -35,5 +35,5 @@ equation
         Text(extent={{-65,-50},{65,-75}}, textString="1oo2", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Boolean 1-out-of-2 protection vote.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanInput u[n]; Modelica.Blocks.Interfaces.BooleanInput valid[n] if useValidInput; Modelica.Blocks.Interfaces.BooleanOutput y; Modelica.Blocks.Interfaces.IntegerOutput nValid; Modelica.Blocks.Interfaces.BooleanOutput degraded; Modelica.Blocks.Interfaces.BooleanOutput enoughValid</p><p><b>Parameters</b> final parameter Integer n(min=1)=2; final parameter Integer m(min=1,max=n)=1; parameter Integer minValid(min=1,max=n)=m; parameter Boolean useValidInput=false; parameter Boolean invalidVote=true</p><p><b>Behavior</b> Boolean 1-out-of-2 protection vote</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> The threshold is fixed. An invalid channel is a protection vote by default. Choosing false can suppress a request with missing data.</p><p><b>Observables</b> y, nValid, degraded, enoughValid</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.BooleanVoting\">ProtectionLibrary.Examples.BooleanVoting</a></p></html>"));
+    Documentation(info="<html><p>Set <code>y</code> when at least 1 of the 2 effective votes are true. A qualified channel contributes its <code>u</code> value; an unqualified channel contributes <code>invalidVote</code>, which defaults to true. Enable <code>useValidInput</code> to supply the qualification vector; otherwise every channel is qualified.</p><p><code>nValid</code> counts qualified channels, <code>degraded</code> marks any loss of qualification, and <code>enoughValid</code> compares the count with <code>minValid</code>. These diagnostic outputs do not gate the vote or change its threshold.</p></html>"));
 end OneOutOfTwo;

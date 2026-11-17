@@ -1,5 +1,5 @@
 within ProtectionLibrary.Voting;
-package AnalogVoting "AnalogVoting"
+package AnalogVoting "Qualified analogue fusion with explicit fallback"
   extends Modelica.Icons.Package;
   annotation(Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
       graphics={
@@ -15,5 +15,5 @@ package AnalogVoting "AnalogVoting"
         Line(points={{51.52,-27.6},{51.52,36.8}}, color={128,128,128}, thickness=0.5, pattern=LinePattern.Solid),
         Ellipse(extent={{47.84,33.12},{55.2,40.48}}, lineColor={0,0,127}, fillColor={0,0,127}, fillPattern=FillPattern.Solid, pattern=LinePattern.Solid, lineThickness=0.5),
         Line(points={{-57.04,7.36},{57.04,7.36}}, color={0,0,127}, thickness=1, pattern=LinePattern.Dash)
-      }));
+      }), Documentation(info="<html><p>Mean, median, trimmed-mean and weighted-mean blocks for finite, qualified measurements. Observe availability together with the returned value and select the fallback policy explicitly.</p></html>"));
 end AnalogVoting;

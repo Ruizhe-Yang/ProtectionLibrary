@@ -1,7 +1,7 @@
 within ProtectionLibrary.Utilities.Internal;
-block VotePattern "Supply independent vote and qualification vectors"
-Modelica.Blocks.Interfaces.BooleanOutput votes[5] annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput valid[5] annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
+block VotePattern "Fixed Boolean vote and qualification schedule"
+Modelica.Blocks.Interfaces.BooleanOutput votes[5]  "Five prescribed Boolean channel requests" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput valid[5]  "Qualification flags for the prescribed requests" annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
 equation
   votes=if time<1 then {true,false,true,false,false} elseif time<2 then fill(false,5) else {false,false,true,true,false};
   valid=if time<2 then fill(true,5) elseif time<3 then {false,true,true,true,true} else fill(false,5);
@@ -13,5 +13,5 @@ equation
         Line(points={{-63,-46},{19,-46},{19,-27},{61,-27}}, color={128,128,128}, thickness=0.8, pattern=LinePattern.Solid),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Supply independent vote and qualification vectors.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanOutput votes[5]; Modelica.Blocks.Interfaces.BooleanOutput valid[5]</p><p><b>Parameters</b> No tuning parameters; use the declared input contract.</p><p><b>Behavior</b> Supply independent vote and qualification vectors</p><p><b>Initialization</b> Evaluated from the current inputs and parameter bindings.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Outputs retain the units declared at the interface. Numerical values depend on the supplied input and parameter range.</p><p><b>Observables</b> votes, valid</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.BooleanVoting\">ProtectionLibrary.Examples.BooleanVoting</a></p></html>"));
+    Documentation(info="<html><p>Supply five votes: <code>{true,false,true,false,false}</code> before 1 s, all false from 1 to 2 s, then <code>{false,false,true,true,false}</code>. All channels qualify before 2 s; the first becomes unqualified from 2 to 3 s, then every channel becomes unqualified.</p><p>Use the pattern to compare vote thresholds and invalid-channel substitution.</p></html>"));
 end VotePattern;

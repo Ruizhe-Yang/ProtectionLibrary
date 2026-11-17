@@ -1,10 +1,10 @@
 within ProtectionLibrary.Thermal;
-block HeatInputLimiter "Limit a commanded heat-flow range"
-parameter Modelica.Units.SI.HeatFlowRate lower=0;
-  parameter Modelica.Units.SI.HeatFlowRate upper=100;
-  Modelica.Blocks.Interfaces.RealInput u(unit="W") annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.RealOutput y(unit="W") annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput limited annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
+block HeatInputLimiter "Saturation of a heat-flow command"
+parameter Modelica.Units.SI.HeatFlowRate lower=0 "Lower command bound";
+  parameter Modelica.Units.SI.HeatFlowRate upper=100 "Upper command bound";
+  Modelica.Blocks.Interfaces.RealInput u(unit="W")  "Requested heat-flow" annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.RealOutput y(unit="W")  "Limited heat-flow command" annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput limited  "True when the output differs from the request" annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
 initial equation
   assert(lower<=upper,"Invalid command limits.");
 equation
@@ -20,5 +20,5 @@ equation
         Text(extent={{-6,74},{52,48}}, textString="Q", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Limit a commanded heat-flow range.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.RealInput u(unit=\"W\"); Modelica.Blocks.Interfaces.RealOutput y(unit=\"W\"); Modelica.Blocks.Interfaces.BooleanOutput limited</p><p><b>Parameters</b> parameter Modelica.Units.SI.HeatFlowRate lower=0; parameter Modelica.Units.SI.HeatFlowRate upper=100</p><p><b>Behavior</b> Limit a commanded heat-flow range</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Limits apply to the command. Verify the actual physical action independently.</p><p><b>Observables</b> y, limited</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.ThermalCooling\">ProtectionLibrary.Examples.ThermalCooling</a></p></html>"));
+    Documentation(info="<html><p>Limit the heat-flow request <code>u</code> to the inclusive interval [lower,upper]. The bounds may be asymmetric. <code>limited</code> is true whenever y differs from u.</p><p>Use u and y in watts. This is a signal limiter; it does not impose the same bound directly on a connected physical network.</p></html>"));
 end HeatInputLimiter;

@@ -1,10 +1,10 @@
 within ProtectionLibrary.Mechanics;
-block ForceLimiter "Limit a signed force request"
-parameter Modelica.Units.SI.Force lower=-10;
-  parameter Modelica.Units.SI.Force upper=10;
-  Modelica.Blocks.Interfaces.RealInput u(unit="N") annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.RealOutput y(unit="N") annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput limited annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
+block ForceLimiter "Saturation of a signed force command"
+parameter Modelica.Units.SI.Force lower=-10 "Lower command bound";
+  parameter Modelica.Units.SI.Force upper=10 "Upper command bound";
+  Modelica.Blocks.Interfaces.RealInput u(unit="N")  "Requested force" annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.RealOutput y(unit="N")  "Limited force command" annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput limited  "True when the output differs from the request" annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
 initial equation
   assert(lower<=upper,"Invalid command limits.");
 equation
@@ -20,5 +20,5 @@ equation
         Text(extent={{-6,74},{52,48}}, textString="F", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Limit a signed force request.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.RealInput u(unit=\"N\"); Modelica.Blocks.Interfaces.RealOutput y(unit=\"N\"); Modelica.Blocks.Interfaces.BooleanOutput limited</p><p><b>Parameters</b> parameter Modelica.Units.SI.Force lower=-10; parameter Modelica.Units.SI.Force upper=10</p><p><b>Behavior</b> Limit a signed force request</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Limits apply to the command. Verify the actual physical action independently.</p><p><b>Observables</b> y, limited</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.MechanicalBraking\">ProtectionLibrary.Examples.MechanicalBraking</a></p></html>"));
+    Documentation(info="<html><p>Limit the force request <code>u</code> to the inclusive interval [lower,upper]. The bounds may be asymmetric. <code>limited</code> is true whenever y differs from u.</p><p>Use u and y in newtons. This is a signal limiter; it does not impose the same bound directly on a connected physical network.</p></html>"));
 end ForceLimiter;

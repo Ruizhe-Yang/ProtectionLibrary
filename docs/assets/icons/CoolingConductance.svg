@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="-115 -115 230 230" role="img" aria-labelledby="title"><title id="title">CoolingConductance: original Modelica icon</title><polyline points="-100,-0 -27,-0" fill="none" stroke="rgb(191,0,0)" stroke-width="2.24" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="27,-0 100,-0" fill="none" stroke="rgb(191,0,0)" stroke-width="2.24" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="-26" y="-37" width="16" height="74" rx="0" fill="rgb(235,235,235)" stroke="rgb(64,64,64)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="10" y="-37" width="16" height="74" rx="0" fill="rgb(235,235,235)" stroke="rgb(64,64,64)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="-3,25 -3,-25" fill="none" stroke="rgb(191,0,0)" stroke-width="3.64" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="3,25 3,-25" fill="none" stroke="rgb(191,0,0)" stroke-width="3.64" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="-42,-59 42,-59" fill="none" stroke="rgb(64,64,64)" stroke-width="1.96" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="42,-59 34,-56 34,-62" fill="rgb(64,64,64)" stroke="rgb(64,64,64)"/>
+<text x="0" y="62" font-family="Arial,DejaVu Sans,sans-serif" font-size="23.4" text-anchor="middle" dominant-baseline="central" fill="rgb(191,0,0)">G+</text></svg>

@@ -1,11 +1,11 @@
 within ProtectionLibrary.Coordination;
-block SafeStateSelector "Map ordered requests into declared integer safe-state commands"
-parameter Integer normalMode=0;
-  parameter Integer protectedMode=1;
-  parameter Integer emergencyMode=2;
-    Modelica.Blocks.Interfaces.BooleanInput protect annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput emergency annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.IntegerOutput modeRequest annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+block SafeStateSelector "Priority selection of integer state commands"
+parameter Integer normalMode=0 "Mode code selected without protection or emergency";
+  parameter Integer protectedMode=1 "Mode code selected during protection alone";
+  parameter Integer emergencyMode=2 "Mode code selected with emergency priority";
+    Modelica.Blocks.Interfaces.BooleanInput protect  "Request protectedMode" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput emergency  "Request emergencyMode with highest priority" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.IntegerOutput modeRequest  "Selected integer mode command" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
 equation
   modeRequest=if emergency then emergencyMode elseif protect then protectedMode else normalMode;
   annotation(Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
@@ -21,5 +21,5 @@ equation
         Text(extent={{-48,-61},{60,-82}}, textString="mode", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Map ordered requests into declared integer safe-state commands.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanInput protect; Modelica.Blocks.Interfaces.BooleanInput emergency; Modelica.Blocks.Interfaces.IntegerOutput modeRequest</p><p><b>Parameters</b> parameter Integer normalMode=0; parameter Integer protectedMode=1; parameter Integer emergencyMode=2</p><p><b>Behavior</b> Map ordered requests into declared integer safe-state commands</p><p><b>Initialization</b> Evaluated from the current inputs and parameter bindings.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Outputs retain the units declared at the interface. Numerical values depend on the supplied input and parameter range.</p><p><b>Observables</b> modeRequest</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">ProtectionLibrary.Examples.CommandPriorityAndInterlock</a></p></html>"));
+    Documentation(info="<html><p>Output emergencyMode when emergency is true, protectedMode when protect alone is true, and normalMode otherwise. The three integer codes are supplied by the application.</p><p>The output is a requested mode with no latch or check that the receiving system has reached it.</p></html>"));
 end SafeStateSelector;

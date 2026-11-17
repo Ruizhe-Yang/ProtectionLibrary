@@ -1,24 +1,24 @@
 within ProtectionLibrary.Voting.AnalogVoting;
-block Median3 "Fuse only qualified measurements using median"
-final parameter Integer n(min=1)=3;
-  parameter Integer minValid(min=1,max=n)=2;
-  final parameter ProtectionLibrary.Utilities.Types.AnalogMethod method=ProtectionLibrary.Utilities.Types.AnalogMethod.Median;
-  parameter Integer trimEachSide(min=0)=1;
-  parameter Real weights[n]=fill(1,n);
-  parameter Boolean useValidInput=false;
-  parameter Real fallbackValue=0;
-  parameter ProtectionLibrary.Utilities.Types.Fallback fallback=ProtectionLibrary.Utilities.Types.Fallback.Value;
-    Modelica.Blocks.Interfaces.RealInput u[n] annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanInput valid[n] if useValidInput annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.RealOutput y annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput available annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.IntegerOutput nValid annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
+block Median3 "Median of qualified measurements from three channels"
+final parameter Integer n(min=1)=3 "Number of measurement channels";
+  parameter Integer minValid(min=1,max=n)=2 "Minimum eligible count, after trimming when used";
+  final parameter ProtectionLibrary.Utilities.Types.AnalogMethod method=ProtectionLibrary.Utilities.Types.AnalogMethod.Median "Fusion method for eligible measurements";
+  parameter Integer trimEachSide(min=0)=1 "Number removed at each sorted end for TrimmedMean";
+  parameter Real weights[n]=fill(1,n) "Finite nonnegative channel weights for WeightedMean";
+  parameter Boolean useValidInput=false "Expose external channel-qualification inputs";
+  parameter Real fallbackValue=0 "Constant fallback and initial HoldLast value";
+  parameter ProtectionLibrary.Utilities.Types.Fallback fallback=ProtectionLibrary.Utilities.Types.Fallback.Value "Output policy while fusion is unavailable";
+    Modelica.Blocks.Interfaces.RealInput u[n]  "Measurements expressed in a common unit" annotation(Placement(transformation(origin={-100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanInput valid[n] if useValidInput  "External channel qualification" annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.RealOutput y  "Available fused value or selected fallback" annotation(Placement(transformation(origin={100,70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,70},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput available  "True when count and method-specific requirements are met" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.IntegerOutput nValid  "Number of finite qualified measurements before trimming" annotation(Placement(transformation(origin={100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,-70},extent={{-10,-10},{10,10}})));
 protected
-  Modelica.Blocks.Interfaces.BooleanInput qualified[n] annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
-  Real candidate;
-  Boolean eligible[n];
-  Real qualifiedWeight;
-  Real held(start=0,fixed=true);
+  Modelica.Blocks.Interfaces.BooleanInput qualified[n]  "Qualification vector after optional-input binding" annotation(Placement(transformation(origin={-100,-70},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,-70},extent={{-10,-10},{10,10}})));
+  Real candidate "Fused value before fallback selection";
+  Boolean eligible[n] "Channels that are both qualified and finite";
+  Real qualifiedWeight "Sum of eligible channel weights";
+  Real held(start=0,fixed=true) "Fallback value retained for HoldLast";
 initial equation
   assert(n>=1 and minValid>=1 and minValid<=n and trimEachSide>=0 and min(weights)>=0 and max(weights)<Modelica.Constants.inf,"Invalid fusion configuration.");
 equation
@@ -54,5 +54,5 @@ equation
         Text(extent={{-65,-50},{65,-75}}, textString="med(3)", textColor={64,64,64}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Fuse only qualified measurements using median.</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.RealInput u[n]; Modelica.Blocks.Interfaces.BooleanInput valid[n] if useValidInput; Modelica.Blocks.Interfaces.RealOutput y; Modelica.Blocks.Interfaces.BooleanOutput available; Modelica.Blocks.Interfaces.IntegerOutput nValid</p><p><b>Parameters</b> final parameter Integer n(min=1)=3; parameter Integer minValid(min=1,max=n)=2; final parameter ProtectionLibrary.Utilities.Types.AnalogMethod method=ProtectionLibrary.Utilities.Types.AnalogMethod.Median; parameter Integer trimEachSide(min=0)=1; parameter Real weights[n]=fill(1,n); parameter Boolean useValidInput=false; parameter Real fallbackValue=0; parameter ProtectionLibrary.Utilities.Types.Fallback fallback=ProtectionLibrary.Utilities.Types.Fallback.Value</p><p><b>Behavior</b> Fuse only qualified measurements using median</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Missing channels never enter the statistic. A fallback can be returned while available remains false.</p><p><b>Observables</b> y, available, nValid</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.BooleanVoting\">ProtectionLibrary.Examples.BooleanVoting</a></p></html>"));
+    Documentation(info="<html><p>Calculate the median of the eligible entries from three channels. An even eligible count returns the arithmetic mean of the two middle values. Use measurements in one common unit. An entry is eligible only when qualified and finite. With <code>useValidInput=false</code>, all entries are qualified, but non-finite values are still excluded.</p><p>Read <code>available</code> with <code>y</code>; <code>nValid</code> counts eligible entries before any trimming. While unavailable, Value returns <code>fallbackValue</code>. HoldLast starts at <code>fallbackValue</code> and, on loss of availability, retains the fusion evaluated from <code>pre(u)</code> and <code>pre(qualified)</code>.</p></html>"));
 end Median3;

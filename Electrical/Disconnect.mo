@@ -1,17 +1,17 @@
 within ProtectionLibrary.Electrical;
-model Disconnect "Open a finite electrical path and expose its actual modeled conductance"
-Modelica.Electrical.Analog.Interfaces.PositivePin p annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Electrical.Analog.Interfaces.NegativePin n annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-  parameter Boolean useHeatPort=false;
-  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatPort if useHeatPort annotation(Placement(transformation(origin={0,-100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,-100},extent={{-10,-10},{10,10}})));
-  Modelica.Units.SI.Voltage v;
-  Modelica.Units.SI.Current i;
-  Modelica.Units.SI.Power lossPower;
-  parameter Modelica.Units.SI.Resistance Ron(min=0)=0.001;
-  parameter Modelica.Units.SI.Conductance Goff(min=0)=1e-6;
-  Modelica.Blocks.Interfaces.BooleanInput openCommand annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
-  Modelica.Blocks.Interfaces.BooleanOutput isOpen annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Units.SI.Conductance conductance;
+model Disconnect "Commanded electrical contact with residual conductance"
+Modelica.Electrical.Analog.Interfaces.PositivePin p  "Pin at the positive voltage reference" annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Electrical.Analog.Interfaces.NegativePin n  "Pin at the negative voltage reference" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+  parameter Boolean useHeatPort=false "Expose a heat port for electrical dissipation";
+  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatPort if useHeatPort  "Heat port exporting the dissipated power" annotation(Placement(transformation(origin={0,-100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,-100},extent={{-10,-10},{10,10}})));
+  Modelica.Units.SI.Voltage v "Voltage from p to n";
+  Modelica.Units.SI.Current i "Current entering p";
+  Modelica.Units.SI.Power lossPower "Nonnegative electrical dissipation";
+  parameter Modelica.Units.SI.Resistance Ron(min=0)=0.001 "Positive resistance of the closed contact";
+  parameter Modelica.Units.SI.Conductance Goff(min=0)=1e-6 "Residual conductance of the open contact";
+  Modelica.Blocks.Interfaces.BooleanInput openCommand  "Select the open-contact conductance" annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
+  Modelica.Blocks.Interfaces.BooleanOutput isOpen  "True for the selected off-conductance state" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Units.SI.Conductance conductance "Conductance selected by the command";
 initial equation
   assert(Ron>0 and Goff>=0 and Goff<1/Ron,"Invalid passive electrical parameters.");
 equation
@@ -33,5 +33,5 @@ equation
         Line(points={{-13,57},{-13,37}}, color={128,128,128}, thickness=0.6, pattern=LinePattern.Solid, arrow={Arrow.None,Arrow.Filled}),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Open a finite electrical path and expose its actual modeled conductance.</p><p><b>Interfaces</b> Modelica.Electrical.Analog.Interfaces.PositivePin p; Modelica.Electrical.Analog.Interfaces.NegativePin n; Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatPort if useHeatPort; Modelica.Blocks.Interfaces.BooleanInput openCommand; Modelica.Blocks.Interfaces.BooleanOutput isOpen</p><p><b>Parameters</b> parameter Boolean useHeatPort=false; parameter Modelica.Units.SI.Resistance Ron(min=0)=0.001; parameter Modelica.Units.SI.Conductance Goff(min=0)=1e-6</p><p><b>Behavior</b> Open a finite electrical path and expose its actual modeled conductance</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Positive i enters p. Positive dissipation can be exported as heat. The off branch is defined by the declared finite conductance.</p><p><b>Observables</b> isOpen</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.ElectricalTripAndDump\">ProtectionLibrary.Examples.ElectricalTripAndDump</a></p></html>"));
+    Documentation(info="<html><p>Select conductance <code>1/Ron</code> when <code>openCommand=false</code> and <code>Goff</code> when true. Voltage is p.v-n.v and positive current enters p. The relation changes immediately with the command.</p><p><code>isOpen</code> identifies the selected off-conductance state; it is not independent actuator feedback. With <code>useHeatPort=true</code>, electrical dissipation is exported through the heat port. A positive Goff retains a leakage path.</p></html>"));
 end Disconnect;

@@ -1,15 +1,15 @@
 within ProtectionLibrary.Electrical;
-model DumpLoad "Connect a finite dissipative electrical dump load"
-Modelica.Electrical.Analog.Interfaces.PositivePin p annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Electrical.Analog.Interfaces.NegativePin n annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-  parameter Boolean useHeatPort=false;
-  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatPort if useHeatPort annotation(Placement(transformation(origin={0,-100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,-100},extent={{-10,-10},{10,10}})));
-  Modelica.Units.SI.Voltage v;
-  Modelica.Units.SI.Current i;
-  Modelica.Units.SI.Power lossPower;
-  parameter Modelica.Units.SI.Resistance R(min=0)=10;
-  parameter Modelica.Units.SI.Conductance Goff(min=0)=1e-8;
-  Modelica.Blocks.Interfaces.BooleanInput command annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
+model DumpLoad "Switched resistive load with off-state conductance"
+Modelica.Electrical.Analog.Interfaces.PositivePin p  "Pin at the positive voltage reference" annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Electrical.Analog.Interfaces.NegativePin n  "Pin at the negative voltage reference" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+  parameter Boolean useHeatPort=false "Expose a heat port for electrical dissipation";
+  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatPort if useHeatPort  "Heat port exporting the dissipated power" annotation(Placement(transformation(origin={0,-100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,-100},extent={{-10,-10},{10,10}})));
+  Modelica.Units.SI.Voltage v "Voltage from p to n";
+  Modelica.Units.SI.Current i "Current entering p";
+  Modelica.Units.SI.Power lossPower "Nonnegative electrical dissipation";
+  parameter Modelica.Units.SI.Resistance R(min=0)=10 "Positive resistance selected when commanded";
+  parameter Modelica.Units.SI.Conductance Goff(min=0)=1e-8 "Conductance selected when not commanded";
+  Modelica.Blocks.Interfaces.BooleanInput command  "Select the resistive dump load" annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
 
 initial equation
   assert(R>0 and Goff>=0,"Invalid passive electrical parameters.");
@@ -34,5 +34,5 @@ equation
         Line(points={{19,-35},{19,-58}}, color={191,0,0}, thickness=0.8, pattern=LinePattern.Solid, arrow={Arrow.None,Arrow.Filled}),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Connect a finite dissipative electrical dump load.</p><p><b>Interfaces</b> Modelica.Electrical.Analog.Interfaces.PositivePin p; Modelica.Electrical.Analog.Interfaces.NegativePin n; Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatPort if useHeatPort; Modelica.Blocks.Interfaces.BooleanInput command</p><p><b>Parameters</b> parameter Boolean useHeatPort=false; parameter Modelica.Units.SI.Resistance R(min=0)=10; parameter Modelica.Units.SI.Conductance Goff(min=0)=1e-8</p><p><b>Behavior</b> Connect a finite dissipative electrical dump load</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Positive i enters p. Positive dissipation can be exported as heat. The off branch is defined by the declared finite conductance.</p><p><b>Observables</b> Public outputs and the stated input conditions.</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.ElectricalTripAndDump\">ProtectionLibrary.Examples.ElectricalTripAndDump</a></p></html>"));
+    Documentation(info="<html><p>Apply <code>i=v/R</code> while <code>command=true</code>, and <code>i=Goff*v</code> otherwise. The two-pin element dissipates electrical power for either voltage polarity; positive current enters p.</p><p>Connect the load across the intended circuit nodes. When the optional heat port is enabled, it exports <code>lossPower=v*i</code>. Switching is instantaneous, with no thermal storage or resistance variation.</p></html>"));
 end DumpLoad;

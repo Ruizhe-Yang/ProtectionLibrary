@@ -1,12 +1,12 @@
 within ProtectionLibrary.Coordination;
-block MinimumOffTime "保护切断后强制最短断开时间"
-  parameter Modelica.Units.SI.Time holdOff(min=0) = 0.5 "从切断请求上升沿算起的禁止时长，s";
-  Modelica.Blocks.Interfaces.BooleanInput trip "切断请求" annotation(Placement(transformation(extent={{-106,18},{-94,30}}), iconTransformation(extent={{-106,18},{-94,30}})));
-  Modelica.Blocks.Interfaces.BooleanInput runDemand "名义运行需求" annotation(Placement(transformation(extent={{-106,-30},{-94,-18}}), iconTransformation(extent={{-106,-30},{-94,-18}})));
-  Modelica.Blocks.Interfaces.BooleanOutput runCommand "符合保护等待时间的运行命令" annotation(Placement(transformation(extent={{94,-6},{106,6}}), iconTransformation(extent={{94,-6},{106,6}})));
+block MinimumOffTime "Restart inhibition measured from each trip edge"
+  parameter Modelica.Units.SI.Time holdOff(min=0) = 0.5 "Restart inhibition measured from the latest trip rising edge";
+  Modelica.Blocks.Interfaces.BooleanInput trip "Trip request that inhibits operation" annotation(Placement(transformation(extent={{-106,18},{-94,30}}), iconTransformation(extent={{-106,18},{-94,30}})));
+  Modelica.Blocks.Interfaces.BooleanInput runDemand "Nominal request to operate" annotation(Placement(transformation(extent={{-106,-30},{-94,-18}}), iconTransformation(extent={{-106,-30},{-94,-18}})));
+  Modelica.Blocks.Interfaces.BooleanOutput runCommand "Run demand qualified by trip clearance and waiting time" annotation(Placement(transformation(extent={{94,-6},{106,6}}), iconTransformation(extent={{94,-6},{106,6}})));
 protected
-  discrete Modelica.Units.SI.Time lastTrip;
-  discrete Boolean seen;
+  discrete Modelica.Units.SI.Time lastTrip "Time of initialisation or the latest trip rising edge";
+  discrete Boolean seen "A trip has occurred since initialisation";
 initial equation
   assert(holdOff >= 0, "Hold-off time must be nonnegative.");
 equation
@@ -27,21 +27,5 @@ equation
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
     Diagram(coordinateSystem(extent={{-100,-100},{100,100}}, preserveAspectRatio=true), graphics={Text(extent={{-96,99},{96,88}}, textColor={25,90,132}, textString="MinimumOffTime")}),
-    Documentation(info="<html><p><b>Purpose</b> 保护切断后强制最短断开时间</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.BooleanInput trip \"切断请求\"; Modelica.Blocks.Interfaces.BooleanInput runDemand \"名义运行需求\"; Modelica.Blocks.Interfaces.BooleanOutput runCommand \"符合保护等待时间的运行命令\"</p><p><b>Parameters</b> parameter Modelica.Units.SI.Time holdOff(min=0) = 0.5 \"从切断请求上升沿算起的禁止时长，s\"</p><p><b>Behavior</b> 保护切断后强制最短断开时间</p><p><b>Initialization</b> Use the declared initial values and host state modifiers.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Use the declared parameter range. The catalog identifies simulation coverage.</p><p><b>Observables</b> Inspect the declared output variables.</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">ProtectionLibrary.Examples.CommandPriorityAndInterlock</a></p>
-<p>保护切断后强制最短断开时间</p>
-<p>专业分类为 LatchingAndReset.ResetInhibit。</p>
-<p>接口与方向</p>
-<ul>
-<li><code>Modelica.Blocks.Interfaces.BooleanInput trip \"切断请求\"</code></li>
-<li><code>Modelica.Blocks.Interfaces.BooleanInput runDemand \"名义运行需求\"</code></li>
-<li><code>Modelica.Blocks.Interfaces.BooleanOutput runCommand \"符合保护等待时间的运行命令\"</code></li>
-</ul>
-<p>参数、类型、默认值及约束</p>
-<ul>
-<li><code>Modelica.Units.SI.Time holdOff(min=0) = 0.5 \"从切断请求上升沿算起的禁止时长，s\"</code></li>
-</ul>
-<p><b>时序与基准行为</b> 请求存在期间保持切断。请求早于 holdOff 撤销时继续等待。首次请求前允许正常运行。</p>
-<p><b>最小用法</b> 接接触器许可。若需以真实断开时刻计时，可由动作反馈触发独立保持逻辑。 <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">MultiConditionInterlock</a> 展示同域接线。</p>
-<p><b>适用边界</b> 该模型以请求时刻计时，实际断开可能有执行延时。</p>
-</html>"));
+    Documentation(info="<html><p>Pass runDemand only when trip is false and holdOff has elapsed since the latest trip rising edge. Before any trip, the demand passes immediately. An initially true trip starts the same waiting interval at initialisation.</p><p>The interval is measured from trip activation, not clearance. If a trip lasts longer than holdOff, its removal can allow an immediate restart. Each new trip edge restarts the interval.</p></html>"));
 end MinimumOffTime;

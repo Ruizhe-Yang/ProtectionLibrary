@@ -1,13 +1,13 @@
 within ProtectionLibrary.Coordination;
-block RedundantChannelSelect "根据可用性接管到独立备用命令"
-  parameter Real fallback = 0 "两通道均不可用时的显式回退命令";
-  Modelica.Blocks.Interfaces.RealInput primary "主通道" annotation(Placement(transformation(extent={{-106,66},{-94,78}}), iconTransformation(extent={{-106,66},{-94,78}})));
-  Modelica.Blocks.Interfaces.RealInput backup "备用通道" annotation(Placement(transformation(extent={{-106,18},{-94,30}}), iconTransformation(extent={{-106,18},{-94,30}})));
-  Modelica.Blocks.Interfaces.BooleanInput primaryValid "主通道有效" annotation(Placement(transformation(extent={{-106,-30},{-94,-18}}), iconTransformation(extent={{-106,-30},{-94,-18}})));
-  Modelica.Blocks.Interfaces.BooleanInput backupValid "备用通道有效" annotation(Placement(transformation(extent={{-106,-78},{-94,-66}}), iconTransformation(extent={{-106,-78},{-94,-66}})));
-  Modelica.Blocks.Interfaces.RealOutput y "已选命令" annotation(Placement(transformation(extent={{94,42},{106,54}}), iconTransformation(extent={{94,42},{106,54}})));
-  Modelica.Blocks.Interfaces.BooleanOutput usingBackup "正在用备用通道" annotation(Placement(transformation(extent={{94,-6},{106,6}}), iconTransformation(extent={{94,-6},{106,6}})));
-  Modelica.Blocks.Interfaces.BooleanOutput valid "至少一路有效" annotation(Placement(transformation(extent={{94,-54},{106,-42}}), iconTransformation(extent={{94,-54},{106,-42}})));
+block RedundantChannelSelect "Availability-based primary and backup command selection"
+  parameter Real fallback = 0 "Command used when neither channel is valid";
+  Modelica.Blocks.Interfaces.RealInput primary "Preferred command channel" annotation(Placement(transformation(extent={{-106,66},{-94,78}}), iconTransformation(extent={{-106,66},{-94,78}})));
+  Modelica.Blocks.Interfaces.RealInput backup "Backup command channel" annotation(Placement(transformation(extent={{-106,18},{-94,30}}), iconTransformation(extent={{-106,18},{-94,30}})));
+  Modelica.Blocks.Interfaces.BooleanInput primaryValid "External validity of the primary channel" annotation(Placement(transformation(extent={{-106,-30},{-94,-18}}), iconTransformation(extent={{-106,-30},{-94,-18}})));
+  Modelica.Blocks.Interfaces.BooleanInput backupValid "External validity of the backup channel" annotation(Placement(transformation(extent={{-106,-78},{-94,-66}}), iconTransformation(extent={{-106,-78},{-94,-66}})));
+  Modelica.Blocks.Interfaces.RealOutput y "Selected command" annotation(Placement(transformation(extent={{94,42},{106,54}}), iconTransformation(extent={{94,42},{106,54}})));
+  Modelica.Blocks.Interfaces.BooleanOutput usingBackup "Backup is selected because the primary is invalid" annotation(Placement(transformation(extent={{94,-6},{106,6}}), iconTransformation(extent={{94,-6},{106,6}})));
+  Modelica.Blocks.Interfaces.BooleanOutput valid "At least one channel is declared valid" annotation(Placement(transformation(extent={{94,-54},{106,-42}}), iconTransformation(extent={{94,-54},{106,-42}})));
 equation
   valid = primaryValid or backupValid;
   usingBackup = not primaryValid and backupValid;
@@ -30,25 +30,5 @@ equation
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
     Diagram(coordinateSystem(extent={{-100,-100},{100,100}}, preserveAspectRatio=true), graphics={Text(extent={{-96,99},{96,88}}, textColor={25,90,132}, textString="RedundantChannelSelect")}),
-    Documentation(info="<html><p><b>Purpose</b> 根据可用性接管到独立备用命令</p><p><b>Interfaces</b> Modelica.Blocks.Interfaces.RealInput primary \"主通道\"; Modelica.Blocks.Interfaces.RealInput backup \"备用通道\"; Modelica.Blocks.Interfaces.BooleanInput primaryValid \"主通道有效\"; Modelica.Blocks.Interfaces.BooleanInput backupValid \"备用通道有效\"; Modelica.Blocks.Interfaces.RealOutput y \"已选命令\"; Modelica.Blocks.Interfaces.BooleanOutput usingBackup \"正在用备用通道\"; Modelica.Blocks.Interfaces.BooleanOutput valid \"至少一路有效\"</p><p><b>Parameters</b> parameter Real fallback = 0 \"两通道均不可用时的显式回退命令\"</p><p><b>Behavior</b> 根据可用性接管到独立备用命令</p><p><b>Initialization</b> Use the declared initial values and host state modifiers.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Use the declared parameter range. The catalog identifies simulation coverage.</p><p><b>Observables</b> Inspect the declared output variables.</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">ProtectionLibrary.Examples.CommandPriorityAndInterlock</a></p>
-<p>根据可用性接管到独立备用命令</p>
-<p>专业分类为 CommandManagement.CommandOverride。</p>
-<p>接口与方向</p>
-<ul>
-<li><code>Modelica.Blocks.Interfaces.RealInput primary \"主通道\"</code></li>
-<li><code>Modelica.Blocks.Interfaces.RealInput backup \"备用通道\"</code></li>
-<li><code>Modelica.Blocks.Interfaces.BooleanInput primaryValid \"主通道有效\"</code></li>
-<li><code>Modelica.Blocks.Interfaces.BooleanInput backupValid \"备用通道有效\"</code></li>
-<li><code>Modelica.Blocks.Interfaces.RealOutput y \"已选命令\"</code></li>
-<li><code>Modelica.Blocks.Interfaces.BooleanOutput usingBackup \"正在用备用通道\"</code></li>
-<li><code>Modelica.Blocks.Interfaces.BooleanOutput valid \"至少一路有效\"</code></li>
-</ul>
-<p>参数、类型、默认值及约束</p>
-<ul>
-<li><code>Real fallback = 0 \"两通道均不可用时的显式回退命令\"</code></li>
-</ul>
-<p><b>时序与基准行为</b> 主通道有效即优先。双路无效立即回退，主通道恢复后立即回切。</p>
-<p><b>最小用法</b> 接两套已定义有效性的输入，y 接唯一执行端。 <a href=\"modelica://ProtectionLibrary.Examples.CommandPriorityAndInterlock\">MultiConditionInterlock</a> 展示同域接线。</p>
-<p><b>适用边界</b> 两路幅值不连续时可能跳变。信号有效性可在上游做迟滞。</p>
-</html>"));
+    Documentation(info="<html><p>Use primary whenever primaryValid is true. Otherwise use backup if backupValid is true, and fallback if neither channel is valid. Expose the backup selection and overall validity separately.</p><p>Validity is taken directly from the two input flags. The selector does not compare values, reject non-finite data or smooth transfers.</p></html>"));
 end RedundantChannelSelect;

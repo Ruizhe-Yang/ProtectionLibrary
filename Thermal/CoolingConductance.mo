@@ -1,12 +1,12 @@
 within ProtectionLibrary.Thermal;
-model CoolingConductance "Increase a finite heat transfer path on demand"
-parameter Modelica.Units.SI.ThermalConductance Goff(min=0)=1;
-  parameter Modelica.Units.SI.ThermalConductance Gon(min=0)=10;
-  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a port_a annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
-  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_b port_b annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
-    Modelica.Blocks.Interfaces.BooleanInput command annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
-  Modelica.Units.SI.ThermalConductance conductance;
-  Modelica.Units.SI.HeatFlowRate heatFlow;
+model CoolingConductance "Commanded increase of a thermal conductance"
+parameter Modelica.Units.SI.ThermalConductance Goff(min=0)=1 "Thermal conductance without a command";
+  parameter Modelica.Units.SI.ThermalConductance Gon(min=0)=10 "Thermal conductance with a command";
+  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a port_a  "First thermal connection" annotation(Placement(transformation(origin={-100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={-100,0},extent={{-10,-10},{10,10}})));
+  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_b port_b  "Second thermal connection" annotation(Placement(transformation(origin={100,0},extent={{-10,-10},{10,10}}),iconTransformation(origin={100,0},extent={{-10,-10},{10,10}})));
+    Modelica.Blocks.Interfaces.BooleanInput command  "Select the increased conductance" annotation(Placement(transformation(origin={0,100},extent={{-10,-10},{10,10}}),iconTransformation(origin={0,100},extent={{-10,-10},{10,10}})));
+  Modelica.Units.SI.ThermalConductance conductance "Thermal conductance selected by the command";
+  Modelica.Units.SI.HeatFlowRate heatFlow "Heat flow from port_a to port_b";
 initial equation
   assert(Goff>=0 and Gon>=Goff,"Invalid thermal conductance ordering.");
 equation
@@ -26,5 +26,5 @@ equation
         Text(extent={{-45,-47},{45,-77}}, textString="G+", textColor={191,0,0}, fontSize=0),
         Text(extent={{-150,155},{150,125}}, textString="%name", textColor={0,0,255}, fontSize=0)
       }),
-    Documentation(info="<html><p><b>Purpose</b> Increase a finite heat transfer path on demand.</p><p><b>Interfaces</b> Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a port_a; Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_b port_b; Modelica.Blocks.Interfaces.BooleanInput command</p><p><b>Parameters</b> parameter Modelica.Units.SI.ThermalConductance Goff(min=0)=1; parameter Modelica.Units.SI.ThermalConductance Gon(min=0)=10</p><p><b>Behavior</b> Increase a finite heat transfer path on demand</p><p><b>Initialization</b> The declared start values and initialization equations apply.</p><p><b>Activation and recovery</b> Not applicable.</p><p><b>Limitations</b> Connect both heat ports to explicit thermal nodes. The device transports heat and stores no energy.</p><p><b>Observables</b> Public outputs and the stated input conditions.</p><p><b>Example</b> <a href=\"modelica://ProtectionLibrary.Examples.ThermalCooling\">ProtectionLibrary.Examples.ThermalCooling</a></p></html>"));
+    Documentation(info="<html><p>Select <code>Gon</code> while command=true and <code>Goff</code> otherwise, with Gon at least Goff. The heat flow from port_a to port_b is conductance times their temperature difference.</p><p>Connect both ports to defined thermal nodes. The element transports heat in either direction and stores no energy; increased conductance cools a body only when the connected environment is colder.</p></html>"));
 end CoolingConductance;
